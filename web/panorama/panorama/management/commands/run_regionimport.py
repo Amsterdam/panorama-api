@@ -7,6 +7,5 @@ log = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        log.info('start importing regions')
+        log.info("start importing regions")
         ImportRegions().process()
-

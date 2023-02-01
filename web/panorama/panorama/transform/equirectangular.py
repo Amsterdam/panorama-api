@@ -2,24 +2,27 @@ from numpy import arange, meshgrid, float64
 
 from . import utils_img_file as Img
 from . import utils_math_array as Math
-from . transformer import SOURCE_WIDTH, PANO_HEIGHT, BasePanoramaTransformer
+from .transformer import SOURCE_WIDTH, PANO_HEIGHT, BasePanoramaTransformer
 
 
 class EquirectangularTransformer(BasePanoramaTransformer):
-
     def get_projection(self, target_width=SOURCE_WIDTH):
 
         # create the target pixel set expressed as coordinates of a normalized equirectangular view of given source-size
         x, y = self._create_sample_set(target_width)
 
         # transform image coordinates in equirectangular projection to cartesian vectors with r=1
-        x1, y1, z1 = Math.cylindrical2cartesian((x, y), source_width=SOURCE_WIDTH, source_height=PANO_HEIGHT)
+        x1, y1, z1 = Math.cylindrical2cartesian(
+            (x, y), source_width=SOURCE_WIDTH, source_height=PANO_HEIGHT
+        )
 
         # rotate vectors according to rotation-matrix for pitch and roll
         x2, y2, z2 = Math.rotate_cartesian_vectors((x1, y1, z1), self.rotation_matrix)
 
         # transform cartesion vectors back to image coordinates in a equirectangular projection
-        x3, y3 = Math.cartesian2cylindrical((x2, y2, z2), source_width=SOURCE_WIDTH, source_height=PANO_HEIGHT)
+        x3, y3 = Math.cartesian2cylindrical(
+            (x2, y2, z2), source_width=SOURCE_WIDTH, source_height=PANO_HEIGHT
+        )
 
         # sample source image with output meshgrid
         return Img.sample_rgb_array_image_as_array((x3, y3), self.pano_rgb)
@@ -32,5 +35,7 @@ class EquirectangularTransformer(BasePanoramaTransformer):
 
         steps = SOURCE_WIDTH / target_width
 
-        return meshgrid(arange(left_top_x, right_bottom_x, steps, dtype=float64),
-                        arange(left_top_y, right_bottom_y, steps, dtype=float64))
+        return meshgrid(
+            arange(left_top_x, right_bottom_x, steps, dtype=float64),
+            arange(left_top_y, right_bottom_y, steps, dtype=float64),
+        )

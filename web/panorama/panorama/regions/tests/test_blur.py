@@ -25,7 +25,7 @@ test_set = [
     "2016/08/02/TMX7316010203-000040/pano_0001_001871.jpg",  # 6
     "2016/08/04/TMX7316010203-000046/pano_0000_000743.jpg",  # 2, misschien 3
     "2016/03/17/TMX7315120208-000020/pano_0000_000175.jpg",  # 1
-    "2016/08/18/TMX7316010203-000079/pano_0006_000054.jpg"   # 1
+    "2016/08/18/TMX7316010203-000079/pano_0006_000054.jpg",  # 1
 ]
 
 
@@ -38,8 +38,10 @@ def get_random_regions():
     return regions
 
 
-@skipIf(not os.path.exists('/app/test_output'),
-        'Blurtest skipped: no mounted directory found, run in docker container')
+@skipIf(
+    not os.path.exists("/app/test_output"),
+    "Blurtest skipped: no mounted directory found, run in docker container",
+)
 class TestBlur(TestCase):
     """
     This is more an integration test than a unit test
@@ -50,27 +52,29 @@ class TestBlur(TestCase):
 
     look into the .gitignore-ed directory PROJECT/test_output for a visual check of the result
     """
+
     def test_blur_runs_without_error(self):
         for pano_idx, panorama_path in enumerate(test_set):
-            log.warning("blurring panorama {}: {}, please hold".format(pano_idx, panorama_path))
+            log.warning(
+                "blurring panorama {}: {}, please hold".format(pano_idx, panorama_path)
+            )
             rb = blur.RegionBlurrer(panorama_path)
             image = rb.get_blurred_image(get_random_regions())
             image = cv2.cvtColor(array(image), cv2.COLOR_RGB2BGR)
             cv2.imwrite("/app/test_output/blur_test_{}.jpg".format(pano_idx), image)
 
     def test_blur_out_of_range(self):
-        panorama_path = test_set[randint(0, len(test_set)-1)]
+        panorama_path = test_set[randint(0, len(test_set) - 1)]
         log.warning("blurring out of range: {}, please hold".format(panorama_path))
         rb = blur.RegionBlurrer(panorama_path)
         image = rb.get_blurred_image([test_util.get_out_of_range_region()])
         image = cv2.cvtColor(array(image), cv2.COLOR_RGB2BGR)
-        cv2.imwrite("/app/test_output/blur_test_{}.jpg".format('out_of_range'), image)
+        cv2.imwrite("/app/test_output/blur_test_{}.jpg".format("out_of_range"), image)
 
     def test_blur_wrap_around(self):
-        panorama_path = test_set[randint(0, len(test_set)-1)]
+        panorama_path = test_set[randint(0, len(test_set) - 1)]
         log.warning("blurring wrap around: {}, please hold".format(panorama_path))
         rb = blur.RegionBlurrer(panorama_path)
         image = rb.get_blurred_image([test_util.get_wrap_around_region()])
         image = cv2.cvtColor(array(image), cv2.COLOR_RGB2BGR)
-        cv2.imwrite("/app/test_output/blur_test_{}.jpg".format('wrap_around'), image)
-
+        cv2.imwrite("/app/test_output/blur_test_{}.jpg".format("wrap_around"), image)

@@ -1,6 +1,13 @@
 from math import pi, tan, sqrt, cos, sin
 
-CUBE_FRONT, CUBE_BACK, CUBE_LEFT, CUBE_RIGHT, CUBE_UP, CUBE_DOWN = 'f', 'b', 'l', 'r', 'u', 'd'
+CUBE_FRONT, CUBE_BACK, CUBE_LEFT, CUBE_RIGHT, CUBE_UP, CUBE_DOWN = (
+    "f",
+    "b",
+    "l",
+    "r",
+    "u",
+    "d",
+)
 #   preserve order - the preview.jpg in utils_img_file_set depends on it:
 CUBE_SIDES = [CUBE_BACK, CUBE_DOWN, CUBE_FRONT, CUBE_LEFT, CUBE_RIGHT, CUBE_UP]
 
@@ -8,11 +15,11 @@ MAX_CUBIC_WIDTH = 2048  # width of cubic edges
 
 # Every cube side has a starting angle on the left, spanning 1/2*pi
 HORIZON_START_ANGLES = [
-    (CUBE_FRONT, -0.25*pi),
-    (CUBE_LEFT, 0.25*pi),
-    (CUBE_BACK, 0.75*pi),
-    (CUBE_RIGHT, 1.25*pi),
-    (CUBE_FRONT, 1.75*pi)
+    (CUBE_FRONT, -0.25 * pi),
+    (CUBE_LEFT, 0.25 * pi),
+    (CUBE_BACK, 0.75 * pi),
+    (CUBE_RIGHT, 1.25 * pi),
+    (CUBE_FRONT, 1.75 * pi),
 ]
 
 
@@ -38,10 +45,10 @@ def _get_coordinate_on_cube_side(phi, theta):
     rotation_for_side = _get_start_angle_per_side(on_side) + 0.25 * pi
 
     half_width = MAX_CUBIC_WIDTH / 2
-    x = half_width * tan(phi-rotation_for_side)
+    x = half_width * tan(phi - rotation_for_side)
 
-    r_on_horizon = sqrt((x - half_width)**2 + half_width**2)
-    angle_from_horizon = 0.5*pi - theta
+    r_on_horizon = sqrt((x - half_width) ** 2 + half_width ** 2)
+    angle_from_horizon = 0.5 * pi - theta
     # avoid errors when theta is almost or completely up or down
     if abs(angle_from_horizon) > 1:
         y = (1 - 1.1 * angle_from_horizon) * half_width
@@ -70,4 +77,3 @@ def equirectangular2cubic_coordinates(coordinates, source_width, source_height):
 
     # project phi and theta on the cubic planes
     return _get_coordinate_on_cube_side(phi, theta)
-

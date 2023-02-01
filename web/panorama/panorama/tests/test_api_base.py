@@ -1,27 +1,29 @@
 # Python
 import datetime, time
+
 # Packages
 from django.contrib.gis.geos import Point
 from django.utils.timezone import utc as UTC_TZ
 import factory
 import factory.fuzzy
 from rest_framework.test import APITestCase
+
 # Project
 from datasets.panoramas.models import Panoramas
 from datasets.panoramas.tests import factories
 
 
 class PanoramaApiTest(APITestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         # Adding locations
         factories.PanoramaFactory.create(
-            pano_id='PANO_1_2014',
+            pano_id="PANO_1_2014",
             status=Panoramas.STATUS.done,
             timestamp=factory.fuzzy.FuzzyDateTime(
-                datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014),
+                datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
+            ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
             geolocation=Point(4.94433, 52.35101, 10),
@@ -30,14 +32,15 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2014,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_2_2014_CLOSE',
+            pano_id="PANO_2_2014_CLOSE",
             status=Panoramas.STATUS.done,
             timestamp=factory.fuzzy.FuzzyDateTime(
-                datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014),
+                datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
+            ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
             geolocation=Point(4.94432, 52.35102, 10),
@@ -46,14 +49,15 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2014,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_3_2015_CLOSE',
+            pano_id="PANO_3_2015_CLOSE",
             status=Panoramas.STATUS.done,
             timestamp=factory.fuzzy.FuzzyDateTime(
-                datetime.datetime(2015, 1, 1, tzinfo=UTC_TZ), force_year=2015),
+                datetime.datetime(2015, 1, 1, tzinfo=UTC_TZ), force_year=2015
+            ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
             geolocation=Point(4.94431, 52.35103, 10),
@@ -62,14 +66,15 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2015,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_5_2014_CLOSE_BUT_NO_CIGAR',
+            pano_id="PANO_5_2014_CLOSE_BUT_NO_CIGAR",
             status=Panoramas.STATUS.detected,
             timestamp=factory.fuzzy.FuzzyDateTime(
-                datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014),
+                datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
+            ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
             geolocation=Point(4.94439711277457, 52.3510810574283, 12),
@@ -78,14 +83,15 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2014,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_5_2015_CLOSE_BUT_NO_CIGAR',
+            pano_id="PANO_5_2015_CLOSE_BUT_NO_CIGAR",
             status=Panoramas.STATUS.to_be_rendered,
             timestamp=factory.fuzzy.FuzzyDateTime(
-                datetime.datetime(2015, 1, 1, tzinfo=UTC_TZ), force_year=2015),
+                datetime.datetime(2015, 1, 1, tzinfo=UTC_TZ), force_year=2015
+            ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
             geolocation=Point(4.897, 52.377, 10),
@@ -94,11 +100,11 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2015,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_6_2016_CLOSE',
+            pano_id="PANO_6_2016_CLOSE",
             status=Panoramas.STATUS.done,
             timestamp=datetime.datetime(2016, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
@@ -109,11 +115,11 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2016,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_7_2016_CLOSE_BUT_NO_CIGAR',
+            pano_id="PANO_7_2016_CLOSE_BUT_NO_CIGAR",
             status=Panoramas.STATUS.done,
             timestamp=datetime.datetime(2016, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
@@ -124,11 +130,11 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2016,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_8_2017_CLOSE',
+            pano_id="PANO_8_2017_CLOSE",
             status=Panoramas.STATUS.done,
             timestamp=datetime.datetime(2017, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
@@ -139,11 +145,11 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2017,
-            mission_type='bi',
-            tags=[]
+            mission_type="bi",
+            tags=[],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_9_2017_CLOSE_BUT_NO_CIGAR',
+            pano_id="PANO_9_2017_CLOSE_BUT_NO_CIGAR",
             status=Panoramas.STATUS.done,
             timestamp=datetime.datetime(2017, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
@@ -154,11 +160,11 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2017,
-            mission_type='bi',
-            tags=['mission-bi']
+            mission_type="bi",
+            tags=["mission-bi"],
         )
         factories.PanoramaFactory.create(
-            pano_id='PANO_WOZ_2018',
+            pano_id="PANO_WOZ_2018",
             status=Panoramas.STATUS.done,
             timestamp=datetime.datetime(2018, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
@@ -169,8 +175,8 @@ class PanoramaApiTest(APITestCase):
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
             mission_distance=5.0,
             mission_year=2018,
-            mission_type='woz',
-            tags=[]
+            mission_type="woz",
+            tags=[],
         )
 
         time.sleep(2)

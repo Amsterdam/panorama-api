@@ -27,7 +27,9 @@ def _remove_stale_increment(increment_path):
     """
 
     try:
-        objectstore.panorama_conn.delete_object(INCREMENTS_CONTAINER, f"{increment_path}{DUMP_FILENAME}")
+        objectstore.panorama_conn.delete_object(
+            INCREMENTS_CONTAINER, f"{increment_path}{DUMP_FILENAME}"
+        )
     except ClientException:
         pass
 
@@ -42,11 +44,13 @@ def _is_mission(subdir):
     :return: True or False if the subdir is a mission dir or not
     """
 
-    pattern = re.compile(r'\d\d/\d\d/\S\S\S\d\d\d\d\d\d\d\d\d\d\S\d\d\d\d\d\d/')
+    pattern = re.compile(r"\d\d/\d\d/\S\S\S\d\d\d\d\d\d\d\d\d\d\S\d\d\d\d\d\d/")
     return pattern.match(subdir)
 
 
-def _check_and_process_recursively(source_container, path, increment, force_rebuild, missions_to_rebuild):
+def _check_and_process_recursively(
+    source_container, path, increment, force_rebuild, missions_to_rebuild
+):
     """Tests recursively if the directory is still up to date.
 
     Recursion terminates when `_is_mission(subdir)` returns True.
@@ -69,8 +73,10 @@ def _check_and_process_recursively(source_container, path, increment, force_rebu
     for subdir in subdirs:
         # process only if subdir is in parent/child tree of increment.
         # If no increment is given process always
-        do_process = increment is None or (f"{source_container}/{subdir}" in increment or
-                                           increment in f"{source_container}/{subdir}")
+        do_process = increment is None or (
+            f"{source_container}/{subdir}" in increment
+            or increment in f"{source_container}/{subdir}"
+        )
 
         if do_process:
             # terminate at mission-dirs, or propagate recursion
@@ -83,8 +89,16 @@ def _check_and_process_recursively(source_container, path, increment, force_rebu
                     up_to_date = False
                     log.info(f"    Not up to date: {source_container}/{subdir}")
             else:
-                up_to_date = _check_and_process_recursively(source_container, subdir, increment, force_rebuild,
-                                                            missions_to_rebuild) and up_to_date
+                up_to_date = (
+                    _check_and_process_recursively(
+                        source_container,
+                        subdir,
+                        increment,
+                        force_rebuild,
+                        missions_to_rebuild,
+                    )
+                    and up_to_date
+                )
 
     if not up_to_date:
         increment_path = f"{source_container}/{path}"
@@ -104,8 +118,12 @@ def check_increments(increment=None, force_rebuild=False):
     """
 
     missions_to_rebuild = []
-    up_to_dates = [_check_and_process_recursively(year, "", increment, force_rebuild, missions_to_rebuild)
-                   for year in PANORAMA_CONTAINERS]
+    up_to_dates = [
+        _check_and_process_recursively(
+            year, "", increment, force_rebuild, missions_to_rebuild
+        )
+        for year in PANORAMA_CONTAINERS
+    ]
 
     all_up_to_date = all(up_to_dates)
     if force_rebuild or (increment is None and not all_up_to_date):

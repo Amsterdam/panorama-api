@@ -38,13 +38,14 @@ class Worker(PanoramaTableAware):
 
     def _still_work_to_do(self):
         """
-            The meat of the work is done in the process() method of the workers.
-            That method returns true if there was a panorama to process for that stage.
-            States are processed right to left (blurrer first), for maximum throughput
+        The meat of the work is done in the process() method of the workers.
+        That method returns true if there was a panorama to process for that stage.
+        States are processed right to left (blurrer first), for maximum throughput
         """
-        still_working = \
-            RegionBlurrer().process() is True \
-            or AllRegionDetector().process() is True \
+        still_working = (
+            RegionBlurrer().process() is True
+            or AllRegionDetector().process() is True
             or PanoRenderer().process() is True
+        )
 
         return still_working

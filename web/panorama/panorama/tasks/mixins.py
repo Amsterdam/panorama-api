@@ -22,7 +22,10 @@ class _wait_for_panorama_table(object):
     def is_panorama_table_present(self):
         try:
             with connection.cursor() as cursor:
-                cursor.execute("select * from information_schema.tables where table_name=%s", ('panoramas_panorama',))
+                cursor.execute(
+                    "select * from information_schema.tables where table_name=%s",
+                    ("panoramas_panorama",),
+                )
                 return bool(cursor.rowcount)
         except Exception as e:
             log.error(e)
@@ -32,4 +35,3 @@ class _wait_for_panorama_table(object):
 class PanoramaTableAware(object):
     def panorama_table_present(self):
         return _wait_for_panorama_table()
-

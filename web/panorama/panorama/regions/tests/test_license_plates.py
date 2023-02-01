@@ -28,19 +28,21 @@ test_set = [
     "2016/08/02/TMX7316010203-000040/pano_0001_001871.jpg",  # 6
     "2016/08/04/TMX7316010203-000046/pano_0000_000743.jpg",  # 2, misschien 3
     "2016/03/17/TMX7315120208-000020/pano_0000_000175.jpg",  # 1
-    "2016/08/18/TMX7316010203-000079/pano_0006_000054.jpg"   # 1
+    "2016/08/18/TMX7316010203-000079/pano_0006_000054.jpg",  # 1
 ]
 
 
 def get_subset():
-    test_1 = randrange(0, len(test_set)-1)
-    test_2 = randrange(0, len(test_set)-1)
+    test_1 = randrange(0, len(test_set) - 1)
+    test_2 = randrange(0, len(test_set) - 1)
 
     return [test_set[test_1], test_set[test_2]]
 
 
-@skipIf(not os.path.exists('/app/test_output'),
-        'LicensePlate detection test skipped: no mounted directory found, run in docker container')
+@skipIf(
+    not os.path.exists("/app/test_output"),
+    "LicensePlate detection test skipped: no mounted directory found, run in docker container",
+)
 class TestLicensePlateDetector(TestCase):
     """
     This is more an integration test than a unit test
@@ -52,9 +54,14 @@ class TestLicensePlateDetector(TestCase):
     Because it's slow not all images are tested all the time.
     look into the .gitignore-ed directory PROJECT/test_output for a visual check of the result
     """
+
     def test_detection_licenseplates_runs_without_errors(self):
         for pano_idx, panorama_path in enumerate(get_subset()):
-            log.warning("detecting license plates in panorama {}: {}, please hold".format(pano_idx, panorama_path))
+            log.warning(
+                "detecting license plates in panorama {}: {}, please hold".format(
+                    pano_idx, panorama_path
+                )
+            )
             lpd = LicensePlateDetector(panorama_path)
             found_licenseplates = lpd.get_licenseplate_regions()
 
@@ -63,4 +70,6 @@ class TestLicensePlateDetector(TestCase):
 
             image = draw_lines(image, found_licenseplates)
 
-            cv2.imwrite("/app/test_output/licenseplate_detection_{}.jpg".format(pano_idx), image)
+            cv2.imwrite(
+                "/app/test_output/licenseplate_detection_{}.jpg".format(pano_idx), image
+            )

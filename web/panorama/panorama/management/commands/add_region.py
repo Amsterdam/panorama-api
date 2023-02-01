@@ -16,22 +16,21 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser):
-        parser.add_argument('--pano_id', required=True)
-        parser.add_argument('--type', required=True)
-        parser.add_argument('--coords', required=True)
+        parser.add_argument("--pano_id", required=True)
+        parser.add_argument("--type", required=True)
+        parser.add_argument("--coords", required=True)
 
     def handle(self, *args, **options):
-        coords = options['coords'].split(',')
+        coords = options["coords"].split(",")
 
         cursor = connection.cursor()
         cursor.execute("select nextval('panoramas_region_id_seq')")
 
         region = Region(
             id=cursor.fetchone()[0],
-            pano_id=options['pano_id'],
-            region_type=options['type'],
-            detected_by='manual',
-
+            pano_id=options["pano_id"],
+            region_type=options["type"],
+            detected_by="manual",
             left_top_x=coords[0],
             left_top_y=coords[1],
             right_top_x=coords[2],
@@ -39,7 +38,6 @@ class Command(BaseCommand):
             right_bottom_x=coords[2],
             right_bottom_y=coords[3],
             left_bottom_x=coords[0],
-            left_bottom_y=coords[3]
+            left_bottom_y=coords[3],
         )
         region.save()
-

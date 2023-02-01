@@ -69,23 +69,34 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser):
-        parser.add_argument('--increment', type=str, help="Builds increment to import (examples: '2016', '2016/01/', "
-                                                          "'2017/02/03/' or even '2017/05/04/TMX000321015-000030/). "
-                                                          "Will abort full restore - because it doesn't check other "
-                                                          "increments for existence or up-to-date-ness. \n"
-                                                          "REMARK: this will lead to an incomplete database. and an "
-                                                          "exit code <> 0, so that integration and CI/CD don't mistake "
-                                                          "the result as a usable database. This behaviour can be "
-                                                          "overriden by adding the `-f` flag. Caveat: if other "
-                                                          "increments are missing or out of date, this will lead to an "
-                                                          "incomplete or out of date database")
-        parser.add_argument('-r', action='store_true', help="Re-build. Always rebuild increments even if they are "
-                                                            "up to date.")
-        parser.add_argument('-f', action='store_true', help="Force import. Use in combination with "
-                                                            "`--increment INCREMENT` to do a full import. TAKE CARE! "
-                                                            "This will leave the database incomplete/out of "
-                                                            "date if any increment outside the given increment is "
-                                                            "missing or out of date.")
+        parser.add_argument(
+            "--increment",
+            type=str,
+            help="Builds increment to import (examples: '2016', '2016/01/', "
+            "'2017/02/03/' or even '2017/05/04/TMX000321015-000030/). "
+            "Will abort full restore - because it doesn't check other "
+            "increments for existence or up-to-date-ness. \n"
+            "REMARK: this will lead to an incomplete database. and an "
+            "exit code <> 0, so that integration and CI/CD don't mistake "
+            "the result as a usable database. This behaviour can be "
+            "overriden by adding the `-f` flag. Caveat: if other "
+            "increments are missing or out of date, this will lead to an "
+            "incomplete or out of date database",
+        )
+        parser.add_argument(
+            "-r",
+            action="store_true",
+            help="Re-build. Always rebuild increments even if they are " "up to date.",
+        )
+        parser.add_argument(
+            "-f",
+            action="store_true",
+            help="Force import. Use in combination with "
+            "`--increment INCREMENT` to do a full import. TAKE CARE! "
+            "This will leave the database incomplete/out of "
+            "date if any increment outside the given increment is "
+            "missing or out of date.",
+        )
 
     @staticmethod
     def _check_increment_arg(increment):
@@ -100,13 +111,20 @@ class Command(BaseCommand):
         if increment[-1:] != "/":
             increment = increment + "/"
 
-        if not any([
-            re.match(r'\d\d\d\d/', increment),
-            re.match(r'\d\d\d\d/\d\d/', increment),
-            re.match(r'\d\d\d\d/\d\d/\d\d/', increment),
-            re.match(r'\d\d\d\d/\d\d/\d\d/\S\S\S\d\d\d\d\d\d\d\d\d\d\S\d\d\d\d\d\d/', increment),
-        ]):
-            raise Exception(f"Increment '{increment_in}' is not a valid incremental pattern")
+        if not any(
+            [
+                re.match(r"\d\d\d\d/", increment),
+                re.match(r"\d\d\d\d/\d\d/", increment),
+                re.match(r"\d\d\d\d/\d\d/\d\d/", increment),
+                re.match(
+                    r"\d\d\d\d/\d\d/\d\d/\S\S\S\d\d\d\d\d\d\d\d\d\d\S\d\d\d\d\d\d/",
+                    increment,
+                ),
+            ]
+        ):
+            raise Exception(
+                f"Increment '{increment_in}' is not a valid incremental pattern"
+            )
 
         return increment
 
@@ -118,11 +136,17 @@ class Command(BaseCommand):
             os.environ["PANOS_TO_PROCESS"] = str(to_process_count)
 
     def handle(self, *args, **options):
-        force_rebuild = options['r']
-        force_import = options['f']
-        increment = self._check_increment_arg(options['increment']) if 'increment' in options else None
+        force_rebuild = options["r"]
+        force_import = options["f"]
+        increment = (
+            self._check_increment_arg(options["increment"])
+            if "increment" in options
+            else None
+        )
 
-        _, missions_to_rebuild = check_increments(increment=increment, force_rebuild=force_rebuild)
+        _, missions_to_rebuild = check_increments(
+            increment=increment, force_rebuild=force_rebuild
+        )
 
         import_mission_metadata()
         for container, mission_path in missions_to_rebuild:

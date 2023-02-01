@@ -21,6 +21,11 @@ class RegionBlurrer(PanoProcessor):
             regions.append(blur.dict_from(region))
 
         if len(regions) > 0:
-            ImgSet.save_image_set(panorama.get_intermediate_url(), region_blurrer.get_blurred_image(regions))
+            ImgSet.save_image_set(
+                panorama.get_intermediate_url(),
+                region_blurrer.get_blurred_image(regions),
+            )
         else:
-            ImgSet.save_image_set(panorama.get_intermediate_url(), region_blurrer.get_unblurred_image())
+            ImgSet.save_image_set(
+                panorama.get_intermediate_url(), region_blurrer.get_unblurred_image()
+            )

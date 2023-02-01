@@ -55,7 +55,11 @@ test_set = [
 
 def draw_lines(image, regions):
     for (lt, rt, rb, lb, detected_by) in regions:
-        log.warning("region at: {}, {}, {}, {}, detected by: {}".format(lt, rt, rb, lb, detected_by))
+        log.warning(
+            "region at: {}, {}, {}, {}, detected by: {}".format(
+                lt, rt, rb, lb, detected_by
+            )
+        )
 
     split_regions = wrap_around(regions)
     for region in split_regions:
@@ -66,14 +70,16 @@ def draw_lines(image, regions):
 
 
 def get_subset():
-    test_1 = randrange(0, len(test_set)-1)
-    test_2 = randrange(0, len(test_set)-1)
+    test_1 = randrange(0, len(test_set) - 1)
+    test_2 = randrange(0, len(test_set) - 1)
 
     return [test_set[test_1], test_set[test_2]]
 
 
-@skipIf(not os.path.exists('/app/test_output'),
-        'Face detection test skipped: no mounted directory found, run in docker container')
+@skipIf(
+    not os.path.exists("/app/test_output"),
+    "Face detection test skipped: no mounted directory found, run in docker container",
+)
 class TestFaceDetection3(TestCase):
     """
     This is more an integration test than a unit test
@@ -85,6 +91,7 @@ class TestFaceDetection3(TestCase):
     Because it's slow not all images are tested all the time.
     look into the .gitignore-ed directory PROJECT/test_output for a visual check of the result
     """
+
     def test_detection_faces3_runs_without_errors(self):
         """Test commented out because of the new infrastructures lacking connection to Google"""
         pass

@@ -28,18 +28,48 @@ NORMAL = 1
 FLIPPED = -1
 
 CASCADE_SETS = [
-    ("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml",
-     1.29, 7, NORMAL, 'default'),
-    ("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml",
-     1.22, 5, NORMAL, 'alt'),
-    ("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt2.xml",
-     1.22, 5, NORMAL, 'alt2'),
-    ("/usr/local/share/OpenCV/haarcascades/haarcascade_profileface.xml",
-     1.11, 5, NORMAL, 'profile'),
-    ("/usr/local/share/OpenCV/haarcascades/haarcascade_profileface.xml",
-     1.11, 5, FLIPPED, 'profile_flip_correct'),
-    ("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt_tree.xml",
-     1.025, 2, NORMAL, 'alt_tree')
+    (
+        "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml",
+        1.29,
+        7,
+        NORMAL,
+        "default",
+    ),
+    (
+        "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml",
+        1.22,
+        5,
+        NORMAL,
+        "alt",
+    ),
+    (
+        "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt2.xml",
+        1.22,
+        5,
+        NORMAL,
+        "alt2",
+    ),
+    (
+        "/usr/local/share/OpenCV/haarcascades/haarcascade_profileface.xml",
+        1.11,
+        5,
+        NORMAL,
+        "profile",
+    ),
+    (
+        "/usr/local/share/OpenCV/haarcascades/haarcascade_profileface.xml",
+        1.11,
+        5,
+        FLIPPED,
+        "profile_flip_correct",
+    ),
+    (
+        "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt_tree.xml",
+        1.025,
+        2,
+        NORMAL,
+        "alt_tree",
+    ),
 ]
 
 DLIB_ZOOM = [2, 1.83, 1.68, 1.54]
@@ -66,13 +96,17 @@ def derive(faces, x, y, zoom, cascade, scale_factor, neighbours):
     :return: a set consisting of 4 coordinate sets, and a description
     """
     derived = []
-    detected_by = "cascade={}, scaleFactor={}, neighbours={}, zoom={}".format(cascade, scale_factor, neighbours, zoom)
+    detected_by = "cascade={}, scaleFactor={}, neighbours={}, zoom={}".format(
+        cascade, scale_factor, neighbours, zoom
+    )
     for (x0, y0, width, height) in faces:
         x1 = int(x0 / zoom) + x
         y1 = int(y0 / zoom) + y
         w1 = int(width / zoom)
         h1 = int(height / zoom)
-        derived.append([(x1, y1), (x1 + w1, y1), (x1 + w1, y1 + h1), (x1, y1 + h1), detected_by])
+        derived.append(
+            [(x1, y1), (x1 + w1, y1), (x1 + w1, y1 + h1), (x1, y1 + h1), detected_by]
+        )
     return derived
 
 
@@ -93,13 +127,23 @@ class FaceDetector(object):
         self._assert_image_loaded()
         face_regions = []
         for x in range(0, Img.PANORAMA_WIDTH, SAMPLE_DISTANCE_X):
-            for idx, y in enumerate(range(JUST_ABOVE_HORIZON, LOWEST_EXPECTED_FACE, SAMPLE_DISTANCE_Y)):
+            for idx, y in enumerate(
+                range(JUST_ABOVE_HORIZON, LOWEST_EXPECTED_FACE, SAMPLE_DISTANCE_Y)
+            ):
                 zoom = OPENCV_ZOOM[idx]
                 snippet = Img.sample_image(self.panorama_img, x, y)
                 zoomed_snippet = Img.prepare_img(snippet, zoom)
                 for cascade_set in CASCADE_SETS:
                     regions = self._detect_opencv_regions(zoomed_snippet, cascade_set)
-                    derived = derive(regions, x, y, zoom, cascade_set[-1], cascade_set[1], cascade_set[2])
+                    derived = derive(
+                        regions,
+                        x,
+                        y,
+                        zoom,
+                        cascade_set[-1],
+                        cascade_set[1],
+                        cascade_set[2],
+                    )
                     face_regions.extend(derived)
 
         return face_regions
@@ -118,7 +162,10 @@ class FaceDetector(object):
             detect = snippet
 
         detected_faces = face_cascade.detectMultiScale(
-            detect, scaleFactor=cascade_set[1], minNeighbors=cascade_set[2], flags=cv2.CASCADE_DO_CANNY_PRUNING
+            detect,
+            scaleFactor=cascade_set[1],
+            minNeighbors=cascade_set[2],
+            flags=cv2.CASCADE_DO_CANNY_PRUNING,
         )
 
         if cascade_set[3] is FLIPPED:
@@ -127,8 +174,10 @@ class FaceDetector(object):
                 detected_face[0] = detect.shape[1] - detected_face[0] - detected_face[2]
 
         if len(detected_faces) > 0:
-            log.warning('Cascade {}-{} detected: {}.'.format(
-                cascade_set[1], cascade_set[0], detected_faces)
+            log.warning(
+                "Cascade {}-{} detected: {}.".format(
+                    cascade_set[1], cascade_set[0], detected_faces
+                )
             )
             regions.extend(detected_faces)
 
@@ -149,12 +198,24 @@ class FaceDetector(object):
             zoomed_size = (int(zoom * PANORAMA_WIDTH), int(zoom * 625))
             zoomed = strip.resize(zoomed_size, Image.BICUBIC)
 
-            detected_faces, _, _ = detector.run(misc.fromimage(zoomed), DLIB_UPSCALE, DLIB_THRESHOLD)
+            detected_faces, _, _ = detector.run(
+                misc.fromimage(zoomed), DLIB_UPSCALE, DLIB_THRESHOLD
+            )
             regions = []
             for d in detected_faces:
-                regions.append((d.left(), d.top(), d.right() - d.left(), d.bottom() - d.top()))
+                regions.append(
+                    (d.left(), d.top(), d.right() - d.left(), d.bottom() - d.top())
+                )
 
-            derived = derive(regions, 0, 1975, zoom, 'dlib', DLIB_UPSCALE, '>{}'.format(DLIB_THRESHOLD))
+            derived = derive(
+                regions,
+                0,
+                1975,
+                zoom,
+                "dlib",
+                DLIB_UPSCALE,
+                ">{}".format(DLIB_THRESHOLD),
+            )
             face_regions.extend(derived)
 
         return face_regions
@@ -167,7 +228,9 @@ class FaceDetector(object):
         self._assert_image_loaded()
         face_regions = []
 
-        strip = self.panorama_img.crop((0, GOOGLE_VISION_START_HEIGHT, PANORAMA_WIDTH, GOOGLE_VISION_END_HEIGHT))
+        strip = self.panorama_img.crop(
+            (0, GOOGLE_VISION_START_HEIGHT, PANORAMA_WIDTH, GOOGLE_VISION_END_HEIGHT)
+        )
         google_image_height = GOOGLE_VISION_END_HEIGHT - GOOGLE_VISION_START_HEIGHT
 
         zoom = GOOGLE_VISION_ZOOM
@@ -183,11 +246,18 @@ class FaceDetector(object):
 
         regions = []
         for fa in response.face_annotations:
-            lt, _, rb, _ =  fa.bounding_poly.vertices
-            regions.append((lt.x, lt.y,
-                            rb.x - lt.x, rb.y - lt.y))
+            lt, _, rb, _ = fa.bounding_poly.vertices
+            regions.append((lt.x, lt.y, rb.x - lt.x, rb.y - lt.y))
 
-            derived = derive(regions, 0, GOOGLE_VISION_START_HEIGHT, zoom, 'google_vision api', 1, 'no treshold')
+            derived = derive(
+                regions,
+                0,
+                GOOGLE_VISION_START_HEIGHT,
+                zoom,
+                "google_vision api",
+                1,
+                "no treshold",
+            )
             face_regions.extend(derived)
 
         return face_regions

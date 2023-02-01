@@ -17,7 +17,9 @@ class AllRegionDetector(PanoProcessor):
 
     def process_one(self, panorama: Panoramas):
         start_time = time.time()
-        lp_detector = license_plates.LicensePlateDetector(panorama.get_intermediate_url())
+        lp_detector = license_plates.LicensePlateDetector(
+            panorama.get_intermediate_url()
+        )
 
         regions = lp_detector.get_licenseplate_regions()
         self.convert_and_save(panorama, regions, start_time, lp=True)
@@ -42,6 +44,8 @@ class AllRegionDetector(PanoProcessor):
 
     def convert_and_save(self, panorama, regions, start_time, **kwargs):
         for region in regions:
-            region[-1] += ', time={}ms'.format(int(round((time.time() - start_time) * 1000)))
-        save_regions(regions, panorama, region_type='N')
+            region[-1] += ", time={}ms".format(
+                int(round((time.time() - start_time) * 1000))
+            )
+        save_regions(regions, panorama, region_type="N")
         region_writer(panorama, **kwargs)

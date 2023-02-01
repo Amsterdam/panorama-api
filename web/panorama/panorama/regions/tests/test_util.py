@@ -12,14 +12,14 @@ def get_random_region_for(start_x):
     start_y = randint(1000, 2500)
     width = randint(400, 700)
     region = {
-        'left_top_x': start_x,
-        'left_top_y': start_y,
-        'right_top_x': start_x + width,
-        'right_top_y': start_y,
-        'right_bottom_x': start_x + width,
-        'right_bottom_y': start_y + width,
-        'left_bottom_x': start_x,
-        'left_bottom_y': start_y + width,
+        "left_top_x": start_x,
+        "left_top_y": start_y,
+        "right_top_x": start_x + width,
+        "right_top_y": start_y,
+        "right_bottom_x": start_x + width,
+        "right_bottom_y": start_y + width,
+        "left_bottom_x": start_x,
+        "left_bottom_y": start_y + width,
     }
     return region
 
@@ -41,7 +41,7 @@ def get_out_of_range_region():
 
 class TestWrapAround(TestCase):
     def test_wrap_around_x(self):
-        actual = wrap_around([((7990, 130), (8010, 130), (8010, 230), (7980, 230), '')])
+        actual = wrap_around([((7990, 130), (8010, 130), (8010, 230), (7980, 230), "")])
         self.assertEquals(len(actual), 2)
 
         points_left, points_right = actual
@@ -57,7 +57,7 @@ class TestWrapAround(TestCase):
         self.assertEqual(points_right[3][0], 0)
 
     def test_wrap_around_y(self):
-        actual = wrap_around([((7990, 130), (8010, 140), (8010, 230), (7990, 250), '')])
+        actual = wrap_around([((7990, 130), (8010, 140), (8010, 230), (7990, 250), "")])
         self.assertEquals(len(actual), 2)
 
         points_left, points_right = actual
@@ -73,7 +73,7 @@ class TestWrapAround(TestCase):
         self.assertEqual(points_right[3][1], 240)
 
     def test_wrap_around_all_left(self):
-        actual = wrap_around([((7980, 130), (7990, 140), (7995, 230), (7990, 250), '')])
+        actual = wrap_around([((7980, 130), (7990, 140), (7995, 230), (7990, 250), "")])
         self.assertEquals(len(actual), 1)
 
         points = actual[0]
@@ -84,7 +84,7 @@ class TestWrapAround(TestCase):
         self.assertEqual(points[3], (7990, 250))
 
     def test_wrap_around_all_right(self):
-        actual = wrap_around([((8010, 130), (8020, 140), (8025, 230), (8015, 250), '')])
+        actual = wrap_around([((8010, 130), (8020, 140), (8025, 230), (8015, 250), "")])
         self.assertEquals(len(actual), 1)
 
         points = actual[0]
@@ -95,7 +95,7 @@ class TestWrapAround(TestCase):
         self.assertEqual(points[3], (15, 250))
 
     def test_wrap_around_x_below_zero(self):
-        actual = wrap_around([((-75, 2114), (67, 2126), (67, 2160), (-75, 2149), '')])
+        actual = wrap_around([((-75, 2114), (67, 2126), (67, 2160), (-75, 2149), "")])
         self.assertEquals(len(actual), 2)
 
         self.assertEqual(actual[0][0], (7925, 2114))
@@ -109,7 +109,9 @@ class TestWrapAround(TestCase):
         self.assertEqual(actual[1][3], (0, 2154))
 
     def test_wrap_around_edge1(self):
-        actual = wrap_around([((7996, 2228), (8066, 2212), (8070, 2230), (8000, 2245), '')])
+        actual = wrap_around(
+            [((7996, 2228), (8066, 2212), (8070, 2230), (8000, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
@@ -125,98 +127,152 @@ class TestWrapAround(TestCase):
         self.assertEqual(actual[1][3], (0, 2245))
 
     def test_wrap_around_edge2(self):
-        actual = wrap_around([((8000, 2228), (8066, 2212), (8070, 2230), (7996, 2245), '')])
+        actual = wrap_around(
+            [((8000, 2228), (8066, 2212), (8070, 2230), (7996, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_edge3(self):
-        actual = wrap_around([((7996, 2228), (8000, 2212), (8070, 2230), (7994, 2245), '')])
+        actual = wrap_around(
+            [((7996, 2228), (8000, 2212), (8070, 2230), (7994, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_edge4(self):
-        actual = wrap_around([((7994, 2228), (8066, 2212), (8000, 2230), (7996, 2245), '')])
+        actual = wrap_around(
+            [((7994, 2228), (8066, 2212), (8000, 2230), (7996, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_edge5(self):
-        actual = wrap_around([((8000, 2228), (8060, 2212), (8000, 2230), (7994, 2245), '')])
+        actual = wrap_around(
+            [((8000, 2228), (8060, 2212), (8000, 2230), (7994, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_edge6(self):
-        actual = wrap_around([((7994, 2228), (8000, 2212), (8060, 2230), (8000, 2245), '')])
+        actual = wrap_around(
+            [((7994, 2228), (8000, 2212), (8060, 2230), (8000, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_edge7(self):
-        actual = wrap_around([((8000, 2228), (8000, 2212), (8060, 2230), (7994, 2245), '')])
+        actual = wrap_around(
+            [((8000, 2228), (8000, 2212), (8060, 2230), (7994, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_edge8(self):
-        actual = wrap_around([((7994, 2228), (8060, 2212), (8000, 2230), (8000, 2245), '')])
+        actual = wrap_around(
+            [((7994, 2228), (8060, 2212), (8000, 2230), (8000, 2245), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 4)
         self.assertEqual(len(actual[1]), 4)
 
     def test_wrap_around_problem1(self):
-        actual = wrap_around([((8002, 2409), (8097, 2444), (8093, 2474), (7998, 2438), '')])
+        actual = wrap_around(
+            [((8002, 2409), (8097, 2444), (8093, 2474), (7998, 2438), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 3)
         self.assertEqual(len(actual[1]), 5)
 
     def test_wrap_around_problem2(self):
-        actual = wrap_around([((7600, 2448), (8108, 2492), (7999, 2524), (7500, 2477), '')])
+        actual = wrap_around(
+            [((7600, 2448), (8108, 2492), (7999, 2524), (7500, 2477), "")]
+        )
         self.assertEqual(len(actual), 2)
         self.assertEqual(len(actual[0]), 5)
         self.assertEqual(len(actual[1]), 3)
 
 
-
 class TestGetRectangle(TestCase):
     def test_get_x_y_shift(self):
-        self.assertEqual(((120, 100), (520, 500)),
-                         get_rectangle([(100, 120),
-                                        (400, 420),
-                                        (500, 520),
-                                        (200, 220),
-                                        ]))
-        self.assertEqual(((80, 50), (420, 400)),
-                         get_rectangle([(100, 120),
-                                        (400, 80),
-                                        (350, 380),
-                                        (50, 420),
-                                        ]))
+        self.assertEqual(
+            ((120, 100), (520, 500)),
+            get_rectangle(
+                [
+                    (100, 120),
+                    (400, 420),
+                    (500, 520),
+                    (200, 220),
+                ]
+            ),
+        )
+        self.assertEqual(
+            ((80, 50), (420, 400)),
+            get_rectangle(
+                [
+                    (100, 120),
+                    (400, 80),
+                    (350, 380),
+                    (50, 420),
+                ]
+            ),
+        )
 
     def test_get_x_y_irregular(self):
-        self.assertEqual(((2448, 7500), (2524, 8000)),
-                         get_rectangle([(7600, 2448), (8000, 2482), (8000, 2524), (7999, 2524), (7500, 2477)]))
-        self.assertEqual(((2482, 0), (2524, 108)),
-                         get_rectangle([(0, 2482), (108, 2492), (0, 2524)]))
+        self.assertEqual(
+            ((2448, 7500), (2524, 8000)),
+            get_rectangle(
+                [(7600, 2448), (8000, 2482), (8000, 2524), (7999, 2524), (7500, 2477)]
+            ),
+        )
+        self.assertEqual(
+            ((2482, 0), (2524, 108)), get_rectangle([(0, 2482), (108, 2492), (0, 2524)])
+        )
 
 
 class TestMessages(TestCase):
-    messages = [{"pano_id": "TMX7316010203-000050_pano_0000_007872",
-                 "panorama_path": "2016/08/08/TMX7316010203-000050/pano_0000_007872.jpg",
-                 "regions": [{"left_top_x": 7810, "left_top_y": 2677, "right_top_x": 7998, "right_top_y": 2654,
-                              "right_bottom_x": 8004, "right_bottom_y": 2696, "left_bottom_x": 7815,
-                              "left_bottom_y": 2721}]
-                 },
-                {"pano_id": "TMX7315120208-000067_pano_0013_000416",
-                 "panorama_path": "2016/06/06/TMX7315120208-000067/pano_0013_000416.jpg",
-                 "regions": [{"left_top_x": 7996, "left_top_y": 2585, "right_top_x": 8139, "right_top_y": 2584,
-                              "right_bottom_x": 8145, "right_bottom_y": 2618, "left_bottom_x": 8002,
-                              "left_bottom_y": 2620}]}
-                ]
+    messages = [
+        {
+            "pano_id": "TMX7316010203-000050_pano_0000_007872",
+            "panorama_path": "2016/08/08/TMX7316010203-000050/pano_0000_007872.jpg",
+            "regions": [
+                {
+                    "left_top_x": 7810,
+                    "left_top_y": 2677,
+                    "right_top_x": 7998,
+                    "right_top_y": 2654,
+                    "right_bottom_x": 8004,
+                    "right_bottom_y": 2696,
+                    "left_bottom_x": 7815,
+                    "left_bottom_y": 2721,
+                }
+            ],
+        },
+        {
+            "pano_id": "TMX7315120208-000067_pano_0013_000416",
+            "panorama_path": "2016/06/06/TMX7315120208-000067/pano_0013_000416.jpg",
+            "regions": [
+                {
+                    "left_top_x": 7996,
+                    "left_top_y": 2585,
+                    "right_top_x": 8139,
+                    "right_top_y": 2584,
+                    "right_bottom_x": 8145,
+                    "right_bottom_y": 2618,
+                    "left_bottom_x": 8002,
+                    "left_bottom_y": 2620,
+                }
+            ],
+        },
+    ]
 
     def testMesseages(self):
         for message in self.messages:
-            for region in do_split_regions(message['regions']):
+            for region in do_split_regions(message["regions"]):
                 (top, left), (bottom, right) = get_rectangle(region)

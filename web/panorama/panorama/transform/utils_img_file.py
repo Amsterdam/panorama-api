@@ -23,7 +23,7 @@ def image2byte_array(image: Image, quality=80):
     :return: bytearray
     """
     img_byte_array = io.BytesIO()
-    image.save(img_byte_array, quality=quality, format='JPEG')
+    image.save(img_byte_array, quality=quality, format="JPEG")
     return img_byte_array.getvalue()
 
 
@@ -39,7 +39,7 @@ def image2byte_array_sized(image: Image, size=1000000):
         if len(byte_array) < size:
             return byte_array
 
-    raise Exception('Could not create small enough image')
+    raise Exception("Could not create small enough image")
 
 
 def byte_array2image(byte_array):
@@ -60,9 +60,9 @@ def get_raw_panorama_image(panorama_path):
     """
 
     # construct objectstore_id
-    container = panorama_path.split('/')[0]
-    name = panorama_path.replace(container + '/', '')
-    objectstore_id = {'container': container, 'name': name}
+    container = panorama_path.split("/")[0]
+    name = panorama_path.replace(container + "/", "")
+    objectstore_id = {"container": container, "name": name}
 
     return byte_array2image(object_store.get_panorama_store_object(objectstore_id))
 
@@ -75,7 +75,7 @@ def get_intermediate_panorama_image(panorama_path):
     :return: PIL image
     """
 
-    objectstore_id = {'container': 'intermediate', 'name': panorama_path}
+    objectstore_id = {"container": "intermediate", "name": panorama_path}
     return byte_array2image(object_store.get_panorama_store_object(objectstore_id))
 
 
@@ -149,12 +149,14 @@ def save_image(image, name, in_panorama_store=False):
     :param in_panorama_store: flag for choosing specific store
     """
     byte_array = io.BytesIO()
-    image.save(byte_array, format='JPEG', optimize=True, progressive=True)
+    image.save(byte_array, format="JPEG", optimize=True, progressive=True)
     if in_panorama_store:
-        container, name = name.split('/')[0], '/'.join(name.split('/')[1:])
-        object_store.put_into_panorama_store(container, name, byte_array.getvalue(), 'image/jpeg')
+        container, name = name.split("/")[0], "/".join(name.split("/")[1:])
+        object_store.put_into_panorama_store(
+            container, name, byte_array.getvalue(), "image/jpeg"
+        )
     else:
-        object_store.put_into_datapunt_store(name, byte_array.getvalue(), 'image/jpeg')
+        object_store.put_into_datapunt_store(name, byte_array.getvalue(), "image/jpeg")
 
 
 def save_array_image(array_img, name, in_panorama_store=False):
@@ -182,9 +184,9 @@ def roll_left(image, shift, width, height):
     part2 = image.crop((shift, 0, width, height))
     part1.load()
     part2.load()
-    output = Image.new('RGB', (width, height))
-    output.paste(part2, (0, 0, width-shift, height))
-    output.paste(part1, (width-shift, 0, width, height))
+    output = Image.new("RGB", (width, height))
+    output.paste(part2, (0, 0, width - shift, height))
+    output.paste(part1, (width - shift, 0, width, height))
 
     return output
 
@@ -217,7 +219,7 @@ def prepare_img(snippet, zoom, for_cv=True):
     :param for_cv: flag for preparing in OpenCV (default)
     :return: equalized and zoomed snippet
     """
-    zoomed_size = (int(zoom*SAMPLE_WIDTH), int(zoom*SAMPLE_HEIGHT))
+    zoomed_size = (int(zoom * SAMPLE_WIDTH), int(zoom * SAMPLE_HEIGHT))
     zoomed_snippet = snippet.resize(zoomed_size, Image.BICUBIC)
     if not for_cv:
         return ImageOps.equalize(zoomed_snippet)

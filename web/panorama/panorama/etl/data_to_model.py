@@ -5,8 +5,11 @@ from django.contrib.gis.geos import Point
 
 from datasets.panoramas.models import Mission
 from datasets.panoramas.models import Panoramas
-from panorama.etl.check_objectstore import panorama_image_file_exists, panorama_blurred_file_exists, \
-    panorama_rendered_file_exists
+from panorama.etl.check_objectstore import (
+    panorama_image_file_exists,
+    panorama_blurred_file_exists,
+    panorama_rendered_file_exists,
+)
 from panorama.etl.date_util import _convert_gps_time
 
 log = logging.getLogger(__name__)
@@ -14,7 +17,7 @@ log = logging.getLogger(__name__)
 
 def process_mission_row(headers, row, _):
     """Process a row of a csv into a Mission model
-    
+
     :param headers: a List containing the header-data
     :param row: a List containing data entries for an instance of Mission
     :param _: ignored csv_file info
@@ -25,20 +28,20 @@ def process_mission_row(headers, row, _):
 
     data = dict(zip(headers, row))
 
-    date_format = '%d-%m-%Y'
-    mission_date = datetime.strptime(data['datum'], date_format).date()
-    mission_year = data['woz-jaargang'] if 'woz-jaargang' in data else None
+    date_format = "%d-%m-%Y"
+    mission_date = datetime.strptime(data["datum"], date_format).date()
+    mission_year = data["woz-jaargang"] if "woz-jaargang" in data else None
     if mission_year is None or mission_year is "":
         mission_year = mission_date.year
 
     return Mission(
-        name=data['Missienaam'],
-        surface_type=data['water/land'][:1].upper(),
-        mission_distance=data['rijafstand'],
-        mission_type=data['missietype'].lower(),
+        name=data["Missienaam"],
+        surface_type=data["water/land"][:1].upper(),
+        mission_distance=data["rijafstand"],
+        mission_type=data["missietype"].lower(),
         mission_year=mission_year,
         date=mission_date,
-        neighbourhood=data['Gebied']
+        neighbourhood=data["Gebied"],
     )
 
 
@@ -52,17 +55,17 @@ def _create_panorama_tags(mission, mission_year):
     tags = []
 
     if mission.mission_type:
-        tags.append('mission-'+mission.mission_type)
+        tags.append("mission-" + mission.mission_type)
 
-    tags.append('mission-'+str(mission_year))
+    tags.append("mission-" + str(mission_year))
 
-    if mission.surface_type == 'L':
-        tags.append('surface-land')
-    elif mission.surface_type == 'W':
-        tags.append('surface-water')
+    if mission.surface_type == "L":
+        tags.append("surface-land")
+    elif mission.surface_type == "W":
+        tags.append("surface-water")
 
     if mission.mission_distance:
-        tags.append('mission-distance-'+str(mission.mission_distance))
+        tags.append("mission-distance-" + str(mission.mission_distance))
 
     return tags
 
@@ -73,19 +76,19 @@ def _get_mission(filename):
     :param filename: location of the panorama, mission_name is part of the path to the panorama
     :return: a persisted Mission, or a transcient dummy Mission, if none is found for the mission_name
     """
-    mission_name = filename.split('/')[-2]
+    mission_name = filename.split("/")[-2]
     try:
         return Mission.objects.filter(name=mission_name)[0]
     except IndexError:
         log.error(f"Mission {mission_name} does not exist, using dummy mission")
         return Mission(
             name=mission_name,
-            surface_type='L',
-            mission_type='bi',
+            surface_type="L",
+            mission_type="bi",
             mission_distance=5,
             date="2015-1-1",
-            neighbourhood='AUTOMATICALLY CREATED',
-            mission_year=EMPTY_FALLBACK_YEAR
+            neighbourhood="AUTOMATICALLY CREATED",
+            mission_year=EMPTY_FALLBACK_YEAR,
         )
 
 
@@ -102,13 +105,13 @@ def process_panorama_row(headers, row, csv_file):
 
     data = dict(zip(headers, row))
 
-    mission = _get_mission(csv_file['name'])
+    mission = _get_mission(csv_file["name"])
 
-    container = csv_file['container']
-    path = "/".join(csv_file['name'].split("/")[:-1])
+    container = csv_file["container"]
+    path = "/".join(csv_file["name"].split("/")[:-1])
 
     try:
-        base_filename = data['panorama_file_name']
+        base_filename = data["panorama_file_name"]
     except KeyError:
         return None
 
@@ -129,8 +132,12 @@ def process_panorama_row(headers, row, csv_file):
     # Creating unique id from mission name and base filename
     pano_id = f"{mission.name}_{base_filename}"
 
-    pano_timestamp = _convert_gps_time(data['gps_seconds[s]'])
-    mission_year = pano_timestamp.year if mission.mission_year == EMPTY_FALLBACK_YEAR else mission.mission_year
+    pano_timestamp = _convert_gps_time(data["gps_seconds[s]"])
+    mission_year = (
+        pano_timestamp.year
+        if mission.mission_year == EMPTY_FALLBACK_YEAR
+        else mission.mission_year
+    )
     tags = _create_panorama_tags(mission, mission_year)
 
     return Panoramas(
@@ -145,13 +152,13 @@ def process_panorama_row(headers, row, csv_file):
         mission_distance=mission.mission_distance,
         tags=tags,
         geolocation=Point(
-            float(data['longitude[deg]']),
-            float(data['latitude[deg]']),
-            float(data['altitude_ellipsoidal[m]'])
+            float(data["longitude[deg]"]),
+            float(data["latitude[deg]"]),
+            float(data["altitude_ellipsoidal[m]"]),
         ),
-        roll=float(data['roll[deg]']),
-        pitch=float(data['pitch[deg]']),
-        heading=float(data['heading[deg]']),
+        roll=float(data["roll[deg]"]),
+        pitch=float(data["pitch[deg]"]),
+        heading=float(data["heading[deg]"]),
     )
 
 
@@ -165,18 +172,18 @@ def process_traject_row(headers, row, _):
     data = dict(zip(headers, row))
 
     return Traject(
-        timestamp=_convert_gps_time(data['gps_seconds[s]']),
+        timestamp=_convert_gps_time(data["gps_seconds[s]"]),
         geolocation=Point(
-            float(data['longitude[deg]']),
-            float(data['latitude[deg]']),
-            float(data['altitude_ellipsoidal[m]'])
+            float(data["longitude[deg]"]),
+            float(data["latitude[deg]"]),
+            float(data["altitude_ellipsoidal[m]"]),
         ),
-        north_rms=float(data['north_rms[m]']),
-        east_rms=float(data['east_rms[m]']),
-        down_rms=float(data['down_rms[m]']),
-        roll_rms=float(data['roll_rms[deg]']),
-        pitch_rms=float(data['pitch_rms[deg]']),
-        heading_rms=float(data['heading_rms[deg]']),
+        north_rms=float(data["north_rms[m]"]),
+        east_rms=float(data["east_rms[m]"]),
+        down_rms=float(data["down_rms[m]"]),
+        roll_rms=float(data["roll_rms[deg]"]),
+        pitch_rms=float(data["pitch_rms[deg]"]),
+        heading_rms=float(data["heading_rms[deg]"]),
     )
 
 

@@ -5,7 +5,6 @@ from numpy import array_equal, allclose
 
 
 class TestMath(TestCase):
-
     def test_cylindrical2cartesion(self):
         result = Math.cylindrical2cartesian((4000, 2000), 8000, 4000)
         self.assertArrayAlmostEquals([1, 0, 0], result)
@@ -20,28 +19,28 @@ class TestMath(TestCase):
         self.assertArrayAlmostEquals([0, 1, 0], result)
 
         result = Math.cylindrical2cartesian((4000, 1000), 8000, 4000)
-        self.assertArrayAlmostEquals([sqrt(1/2), 0, sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([sqrt(1 / 2), 0, sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((4000, 3000), 8000, 4000)
-        self.assertArrayAlmostEquals([sqrt(1/2), 0, -sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([sqrt(1 / 2), 0, -sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((2000, 1000), 8000, 4000)
-        self.assertArrayAlmostEquals([0, -sqrt(1/2), sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([0, -sqrt(1 / 2), sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((2000, 3000), 8000, 4000)
-        self.assertArrayAlmostEquals([0, -sqrt(1/2), -sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([0, -sqrt(1 / 2), -sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((0, 1000), 8000, 4000)
-        self.assertArrayAlmostEquals([-sqrt(1/2), 0, sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([-sqrt(1 / 2), 0, sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((0, 3000), 8000, 4000)
-        self.assertArrayAlmostEquals([-sqrt(1/2), 0, -sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([-sqrt(1 / 2), 0, -sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((6000, 1000), 8000, 4000)
-        self.assertArrayAlmostEquals([0, sqrt(1/2), sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([0, sqrt(1 / 2), sqrt(1 / 2)], result)
 
         result = Math.cylindrical2cartesian((6000, 3000), 8000, 4000)
-        self.assertArrayAlmostEquals([0, sqrt(1/2), -sqrt(1/2)], result)
+        self.assertArrayAlmostEquals([0, sqrt(1 / 2), -sqrt(1 / 2)], result)
 
     def test_cartesian2cylindrical(self):
         result = Math.cartesian2cylindrical((1, 0, 0), 8000, 4000)
@@ -94,12 +93,23 @@ class TestMath(TestCase):
         self.assertTrue(allclose(result, [[0, 0, 1], [0, 1, 0], [-1, 0, 0]]))
 
         result = Math.get_rotation_matrix(0, 45, 45)
-        self.assertTrue(allclose(result, [[sqrt(1/2), 0, sqrt(1/2)], [1/2, sqrt(1/2), -1/2], [-1/2, sqrt(1/2), 1/2]]))
+        self.assertTrue(
+            allclose(
+                result,
+                [
+                    [sqrt(1 / 2), 0, sqrt(1 / 2)],
+                    [1 / 2, sqrt(1 / 2), -1 / 2],
+                    [-1 / 2, sqrt(1 / 2), 1 / 2],
+                ],
+            )
+        )
 
     def assertArrayAlmostEquals(self, expected, actual):
-        self.assertEqual(len(expected), len(actual), 'not same length')
+        self.assertEqual(len(expected), len(actual), "not same length")
         for i in range(len(actual)):
-            self.assertAlmostEquals(expected[i],
-                                    actual[i],
-                                    6,
-                                    'index {} in expected {} and actual {}'.format(i, expected, actual))
+            self.assertAlmostEquals(
+                expected[i],
+                actual[i],
+                6,
+                "index {} in expected {} and actual {}".format(i, expected, actual),
+            )
