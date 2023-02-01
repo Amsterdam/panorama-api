@@ -7,7 +7,6 @@ from django.conf import settings
 from numpy import squeeze, dsplit, dstack, array
 from scipy.ndimage import map_coordinates
 from PIL import Image, ImageOps
-import cv2
 
 from panorama.shared.object_store import ObjectStore
 
@@ -218,21 +217,3 @@ def sample_image(image, x, y, sample_width=SAMPLE_WIDTH, sample_height=SAMPLE_HE
     else:
         snippet = image.crop((x, y, x + sample_width, y + sample_height))
     return snippet
-
-
-def prepare_img(snippet, zoom, for_cv=True):
-    """
-    Prepare an image-snippet for detection (of licensplate or face)
-
-    :param snippet: snippet of PIL image
-    :param zoom: zoom-factor
-    :param for_cv: flag for preparing in OpenCV (default)
-    :return: equalized and zoomed snippet
-    """
-    zoomed_size = (int(zoom * SAMPLE_WIDTH), int(zoom * SAMPLE_HEIGHT))
-    zoomed_snippet = snippet.resize(zoomed_size, Image.BICUBIC)
-    if not for_cv:
-        return ImageOps.equalize(zoomed_snippet)
-    else:
-        gray_image = cv2.cvtColor(array(zoomed_snippet), cv2.COLOR_RGB2GRAY)
-        return cv2.equalizeHist(gray_image)
