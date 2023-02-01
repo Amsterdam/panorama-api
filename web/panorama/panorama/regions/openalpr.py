@@ -29,4 +29,3 @@ class OpenAlpr(object):
                 raise OpenAlprError("Error loading OpenALPR")
             else:
                 log.info("Using OpenALPR {}".format(self.alpr.get_version()))
-

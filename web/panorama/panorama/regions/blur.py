@@ -14,14 +14,14 @@ object_store = ObjectStore()
 
 def dict_from(region):
     return {
-        'left_top_x': region.left_top_x,
-        'left_top_y': region.left_top_y,
-        'right_top_x': region.right_top_x,
-        'right_top_y': region.right_top_y,
-        'right_bottom_x': region.right_bottom_x,
-        'right_bottom_y': region.right_bottom_y,
-        'left_bottom_x': region.left_bottom_x,
-        'left_bottom_y': region.left_bottom_y
+        "left_top_x": region.left_top_x,
+        "left_top_y": region.left_top_y,
+        "right_top_x": region.right_top_x,
+        "right_top_y": region.right_top_y,
+        "right_bottom_x": region.right_bottom_x,
+        "right_bottom_y": region.right_bottom_y,
+        "left_bottom_x": region.left_bottom_x,
+        "left_bottom_y": region.left_bottom_y,
     }
 
 
@@ -29,6 +29,7 @@ class RegionBlurrer(object):
     """
     Class to blur the regions of a panorama image
     """
+
     def __init__(self, panorama_path: str):
         """
         :param panorama_path: path of type
@@ -49,8 +50,10 @@ class RegionBlurrer(object):
         for region in do_split_regions(regions):
             (top, left), (bottom, right) = get_rectangle(region)
             snippet = blurred_image[top:bottom, left:right]
-            blur_kernel_size = 2*int((bottom-top)/4)+1
-            snippet = cv2.GaussianBlur(snippet, (blur_kernel_size, blur_kernel_size), blur_kernel_size)
+            blur_kernel_size = 2 * int((bottom - top) / 4) + 1
+            snippet = cv2.GaussianBlur(
+                snippet, (blur_kernel_size, blur_kernel_size), blur_kernel_size
+            )
             blurred_image[top:bottom, left:right] = snippet
 
         return blurred_image

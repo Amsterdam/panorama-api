@@ -14,7 +14,9 @@ def intersection(point_left, point_right, width):
     """
     part_left = width - point_left[X]
     part_right = point_right[X] - width
-    intersect_y = point_left[Y] + int((point_right[Y] - point_left[Y]) * part_left / (part_left + part_right))
+    intersect_y = point_left[Y] + int(
+        (point_right[Y] - point_left[Y]) * part_left / (part_left + part_right)
+    )
     return width, intersect_y
 
 
@@ -44,7 +46,7 @@ def wrap_around(regions, width=WIDTH):
         else:
             points_left, points_right = [], []
             for idx, curr_coords in enumerate(coordinates):
-                next_coords = coordinates[(idx+1) % len(coordinates)]
+                next_coords = coordinates[(idx + 1) % len(coordinates)]
 
                 if curr_coords[X] == width:
                     if idx == LEFT_TOP or idx == LEFT_BOTTOM:
@@ -82,10 +84,17 @@ def wrap_around(regions, width=WIDTH):
 def do_split_regions(region_dicts):
     split_regions = []
     for region_dict in region_dicts:
-        for split_region in wrap_around([((region_dict['left_top_x'], region_dict['left_top_y']),
-                                          (region_dict['right_top_x'], region_dict['right_top_y']),
-                                          (region_dict['right_bottom_x'], region_dict['right_bottom_y']),
-                                          (region_dict['left_bottom_x'], region_dict['left_bottom_y']), '')]):
+        for split_region in wrap_around(
+            [
+                (
+                    (region_dict["left_top_x"], region_dict["left_top_y"]),
+                    (region_dict["right_top_x"], region_dict["right_top_y"]),
+                    (region_dict["right_bottom_x"], region_dict["right_bottom_y"]),
+                    (region_dict["left_bottom_x"], region_dict["left_bottom_y"]),
+                    "",
+                )
+            ]
+        ):
             split_regions.append(split_region)
 
     return split_regions
@@ -104,5 +113,3 @@ def get_rectangle(coordinates_list):
     right = max([value[X] for value in coordinates_list])
 
     return (top, left), (bottom, right)
-
-

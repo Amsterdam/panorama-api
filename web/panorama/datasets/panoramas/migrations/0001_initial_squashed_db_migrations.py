@@ -14,76 +14,169 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Mission',
+            name="Mission",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField(max_length=24, unique=True)),
-                ('date', models.DateField(null=True)),
-                ('neighbourhood', models.TextField(max_length=50, null=True)),
-                ('mission_type', models.TextField(default='bi', max_length=16)),
-                ('mission_year', models.IntegerField(max_length=4, null=True)),
-                ('surface_type', models.CharField(choices=[('L', 'land'), ('W', 'water')], default='L', max_length=1)),
-                ('mission_distance', models.IntegerField(default=5)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField(max_length=24, unique=True)),
+                ("date", models.DateField(null=True)),
+                ("neighbourhood", models.TextField(max_length=50, null=True)),
+                ("mission_type", models.TextField(default="bi", max_length=16)),
+                ("mission_year", models.IntegerField(max_length=4, null=True)),
+                (
+                    "surface_type",
+                    models.CharField(
+                        choices=[("L", "land"), ("W", "water")],
+                        default="L",
+                        max_length=1,
+                    ),
+                ),
+                ("mission_distance", models.IntegerField(default=5)),
             ],
         ),
         migrations.CreateModel(
-            name='Panorama',
+            name="Panorama",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('pano_id', models.CharField(db_index=True, max_length=37, unique=True)),
-                ('timestamp', models.DateTimeField()),
-                ('filename', models.CharField(max_length=255)),
-                ('path', models.CharField(max_length=400)),
-                ('geolocation', django.contrib.gis.db.models.fields.PointField(dim=3, srid=4326)),
-                ('roll', models.FloatField()),
-                ('pitch', models.FloatField()),
-                ('heading', models.FloatField()),
-                ('_geolocation_2d', django.contrib.gis.db.models.fields.PointField(default=None, null=True, srid=4326)),
-                ('status', model_utils.fields.StatusField(choices=[(0, 'dummy')], default='to_be_rendered', max_length=100, no_check_for_status=True, verbose_name='status')),
-                ('status_changed', model_utils.fields.MonitorField(default=django.utils.timezone.now, monitor='status', verbose_name='status changed')),
-                ('mission_type', models.TextField(db_index=True, default='bi', max_length=16)),
-                ('_geolocation_2d_rd', django.contrib.gis.db.models.fields.PointField(default=None, null=True, srid=28992)),
-                ('mission_year', models.IntegerField(db_index=True, default=2019)),
-                ('surface_type', models.CharField(choices=[('L', 'land'), ('W', 'water')], db_index=True, default='L', max_length=1)),
-                ('mission_distance', models.IntegerField(db_index=True, default=5)),
-                ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=32), blank=True, db_index=True, default=[], size=None)),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "pano_id",
+                    models.CharField(db_index=True, max_length=37, unique=True),
+                ),
+                ("timestamp", models.DateTimeField()),
+                ("filename", models.CharField(max_length=255)),
+                ("path", models.CharField(max_length=400)),
+                (
+                    "geolocation",
+                    django.contrib.gis.db.models.fields.PointField(dim=3, srid=4326),
+                ),
+                ("roll", models.FloatField()),
+                ("pitch", models.FloatField()),
+                ("heading", models.FloatField()),
+                (
+                    "_geolocation_2d",
+                    django.contrib.gis.db.models.fields.PointField(
+                        default=None, null=True, srid=4326
+                    ),
+                ),
+                (
+                    "status",
+                    model_utils.fields.StatusField(
+                        choices=[(0, "dummy")],
+                        default="to_be_rendered",
+                        max_length=100,
+                        no_check_for_status=True,
+                        verbose_name="status",
+                    ),
+                ),
+                (
+                    "status_changed",
+                    model_utils.fields.MonitorField(
+                        default=django.utils.timezone.now,
+                        monitor="status",
+                        verbose_name="status changed",
+                    ),
+                ),
+                (
+                    "mission_type",
+                    models.TextField(db_index=True, default="bi", max_length=16),
+                ),
+                (
+                    "_geolocation_2d_rd",
+                    django.contrib.gis.db.models.fields.PointField(
+                        default=None, null=True, srid=28992
+                    ),
+                ),
+                ("mission_year", models.IntegerField(db_index=True, default=2019)),
+                (
+                    "surface_type",
+                    models.CharField(
+                        choices=[("L", "land"), ("W", "water")],
+                        db_index=True,
+                        default="L",
+                        max_length=1,
+                    ),
+                ),
+                ("mission_distance", models.IntegerField(db_index=True, default=5)),
+                (
+                    "tags",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=32),
+                        blank=True,
+                        db_index=True,
+                        default=[],
+                        size=None,
+                    ),
+                ),
             ],
             options={
-                'ordering': ('id',),
+                "ordering": ("id",),
             },
         ),
         migrations.CreateModel(
-            name='Traject',
+            name="Traject",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField()),
-                ('geolocation', django.contrib.gis.db.models.fields.PointField(dim=3, srid=4326)),
-                ('north_rms', models.DecimalField(decimal_places=14, max_digits=20)),
-                ('east_rms', models.DecimalField(blank=True, decimal_places=14, max_digits=20, null=True)),
-                ('down_rms', models.DecimalField(blank=True, decimal_places=14, max_digits=20, null=True)),
-                ('roll_rms', models.FloatField(blank=True, null=True)),
-                ('pitch_rms', models.FloatField(blank=True, null=True)),
-                ('heading_rms', models.FloatField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timestamp", models.DateTimeField()),
+                (
+                    "geolocation",
+                    django.contrib.gis.db.models.fields.PointField(dim=3, srid=4326),
+                ),
+                ("north_rms", models.DecimalField(decimal_places=14, max_digits=20)),
+                (
+                    "east_rms",
+                    models.DecimalField(
+                        blank=True, decimal_places=14, max_digits=20, null=True
+                    ),
+                ),
+                (
+                    "down_rms",
+                    models.DecimalField(
+                        blank=True, decimal_places=14, max_digits=20, null=True
+                    ),
+                ),
+                ("roll_rms", models.FloatField(blank=True, null=True)),
+                ("pitch_rms", models.FloatField(blank=True, null=True)),
+                ("heading_rms", models.FloatField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Region',
+            name="Region",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('region_type', models.CharField(choices=[('N', 'Nummerbord'), ('G', 'Gezicht')], max_length=1)),
-                ('left_top_x', models.IntegerField()),
-                ('left_top_y', models.IntegerField()),
-                ('right_top_x', models.IntegerField()),
-                ('right_top_y', models.IntegerField()),
-                ('left_bottom_x', models.IntegerField()),
-                ('left_bottom_y', models.IntegerField()),
-                ('right_bottom_x', models.IntegerField()),
-                ('right_bottom_y', models.IntegerField()),
-                ('detected_by', models.CharField(default=None, max_length=255)),
-                ('pano_id', models.CharField(db_index=True, default='', max_length=37)),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "region_type",
+                    models.CharField(
+                        choices=[("N", "Nummerbord"), ("G", "Gezicht")], max_length=1
+                    ),
+                ),
+                ("left_top_x", models.IntegerField()),
+                ("left_top_y", models.IntegerField()),
+                ("right_top_x", models.IntegerField()),
+                ("right_top_y", models.IntegerField()),
+                ("left_bottom_x", models.IntegerField()),
+                ("left_bottom_y", models.IntegerField()),
+                ("right_bottom_x", models.IntegerField()),
+                ("right_bottom_y", models.IntegerField()),
+                ("detected_by", models.CharField(default=None, max_length=255)),
+                ("pano_id", models.CharField(db_index=True, default="", max_length=37)),
             ],
             options={
-                'ordering': ('id',),
+                "ordering": ("id",),
             },
         ),
         datasets.migrate.ManageView(
@@ -152,6 +245,6 @@ class Migration(migrations.Migration):
                     WHERE
                         to_pano.status = 'done'
                     ) subquery1
-            """
+            """,
         ),
     ]

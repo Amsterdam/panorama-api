@@ -43,7 +43,9 @@ APIS = [re_path(r"^panorama/", include(panorama.urls))]
 @api_view()
 @renderer_classes([SwaggerUIRenderer, OpenAPIRenderer, renderers.CoreJSONRenderer])
 def swagger_schema_view(request):
-    generator = schemas.SchemaGenerator(title="Panoramabeelden Amsterdam API", patterns=APIS)
+    generator = schemas.SchemaGenerator(
+        title="Panoramabeelden Amsterdam API", patterns=APIS
+    )
     return response.Response(generator.get_schema(request=request))
 
 

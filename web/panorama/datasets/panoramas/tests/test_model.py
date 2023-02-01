@@ -7,17 +7,22 @@ from datasets.panoramas.models import Panoramas
 
 
 class TestModel(TestCase):
-
     def test_img_url(self):
         cases = [
-            ('container/path/',
-             'image.jpg',
-             settings.PANO_IMAGE_URL + '/container/path/image/equirectangular/panorama_8000.jpg',
-             settings.PANO_IMAGE_URL + '/container/path/image/equirectangular/panorama_4000.jpg',
-             settings.PANO_IMAGE_URL + '/container/path/image/equirectangular/panorama_2000.jpg',
-             settings.PANO_IMAGE_URL + '/container/path/image/cubic/',
-             settings.PANO_IMAGE_URL + '/container/path/image/cubic/{z}/{f}/{y}/{x}.jpg',
-             settings.PANO_IMAGE_URL + '/container/path/image/cubic/preview.jpg'),
+            (
+                "container/path/",
+                "image.jpg",
+                settings.PANO_IMAGE_URL
+                + "/container/path/image/equirectangular/panorama_8000.jpg",
+                settings.PANO_IMAGE_URL
+                + "/container/path/image/equirectangular/panorama_4000.jpg",
+                settings.PANO_IMAGE_URL
+                + "/container/path/image/equirectangular/panorama_2000.jpg",
+                settings.PANO_IMAGE_URL + "/container/path/image/cubic/",
+                settings.PANO_IMAGE_URL
+                + "/container/path/image/cubic/{z}/{f}/{y}/{x}.jpg",
+                settings.PANO_IMAGE_URL + "/container/path/image/cubic/preview.jpg",
+            ),
         ]
         for c in cases:
             p = Panoramas(path=c[0], filename=c[1], geolocation=Point(1, 1, 1))
@@ -30,7 +35,11 @@ class TestModel(TestCase):
 
     def get_raw_image_objectstore_id(self):
         cases = [
-            ('container/path/', 'image.jpg', {'container': 'container', 'name': 'path/image.jpg'}),
+            (
+                "container/path/",
+                "image.jpg",
+                {"container": "container", "name": "path/image.jpg"},
+            ),
         ]
 
         for c in cases:

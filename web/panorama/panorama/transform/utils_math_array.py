@@ -1,4 +1,16 @@
-from numpy import array, sqrt, square, radians, float64, pi, arctan2, arccos, cos, sin, mod
+from numpy import (
+    array,
+    sqrt,
+    square,
+    radians,
+    float64,
+    pi,
+    arctan2,
+    arccos,
+    cos,
+    sin,
+    mod,
+)
 
 
 def get_rotation_matrix(yaw, pitch, roll):
@@ -10,25 +22,21 @@ def get_rotation_matrix(yaw, pitch, roll):
         [
             [1, 0, 0],
             [0, cos(rad_roll), -sin(rad_roll)],
-            [0, sin(rad_roll), cos(rad_roll)]
+            [0, sin(rad_roll), cos(rad_roll)],
         ],
-        dtype=float64
+        dtype=float64,
     )
     rot_y_pitch = array(
         [
             [cos(rad_pitch), 0, sin(rad_pitch)],
             [0, 1, 0],
-            [-sin(rad_pitch), 0, cos(rad_pitch)]
+            [-sin(rad_pitch), 0, cos(rad_pitch)],
         ],
-        dtype=float64
+        dtype=float64,
     )
     rot_z_yaw = array(
-        [
-            [cos(rad_yaw), -sin(rad_yaw), 0],
-            [sin(rad_yaw), cos(rad_yaw), 0],
-            [0, 0, 1]
-        ],
-        dtype=float64
+        [[cos(rad_yaw), -sin(rad_yaw), 0], [sin(rad_yaw), cos(rad_yaw), 0], [0, 0, 1]],
+        dtype=float64,
     )
 
     return rot_x_roll.dot(rot_y_pitch).dot(rot_z_yaw)
@@ -43,8 +51,8 @@ def cylindrical2cartesian(coordinates, source_width, source_height):
     phi = (x - middle) * pi / middle
     theta = (y * pi) / source_height
 
-    x1 = sin(theta)*cos(phi)
-    y1 = sin(theta)*sin(phi)
+    x1 = sin(theta) * cos(phi)
+    y1 = sin(theta) * sin(phi)
     z1 = cos(theta)
 
     return x1, y1, z1
@@ -73,10 +81,10 @@ def cartesian2cylindrical(vector, source_width, source_height, r_is_1=True):
     z = vector[2]
 
     r = 1 if r_is_1 else sqrt(square(x) + square(y) + square(z))
-    theta = arccos(z/r)
+    theta = arccos(z / r)
     phi = arctan2(y, x)
 
-    x1 = mod(middle + middle * phi / pi, source_width-1)
+    x1 = mod(middle + middle * phi / pi, source_width - 1)
     y1 = source_height * theta / pi
 
     return x1, y1

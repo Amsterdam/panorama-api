@@ -24,13 +24,18 @@ def _dump(filename, query, parameters=None):
     output_stream = io.BytesIO()
     with connection.cursor() as cursor:
         # cursor.mogrify encodes parameters and outputs byte-array
-        query_bytes = cursor.mogrify(query) if parameters is None else cursor.mogrify(query, parameters)
+        query_bytes = (
+            cursor.mogrify(query)
+            if parameters is None
+            else cursor.mogrify(query, parameters)
+        )
         copy_command = f"COPY ({query_bytes.decode()}) TO STDOUT WITH (FORMAT binary)"
         cursor.copy_expert(copy_command, output_stream)
     output_stream.seek(0)
     log.info(f"Writing DB dump: {INCREMENTS_CONTAINER}/{filename}")
-    objectstore.put_into_panorama_store(INCREMENTS_CONTAINER, filename, output_stream,
-                                        "binary/octet-stream")
+    objectstore.put_into_panorama_store(
+        INCREMENTS_CONTAINER, filename, output_stream, "binary/octet-stream"
+    )
 
 
 def dump_mission(container, mission_path):
@@ -45,13 +50,15 @@ def dump_mission(container, mission_path):
     :return: None
     """
 
-    fields = [field.name for field in Panoramas._meta.get_fields() if field.name != 'id']
+    fields = [
+        field.name for field in Panoramas._meta.get_fields() if field.name != "id"
+    ]
     table_name = Panoramas._meta.db_table
 
     base_query = f"SELECT {', '.join(fields)} FROM {table_name}"
     mission_where_clause = " WHERE SUBSTRING(pano_id from 1 for 20) = %s"
     mission_order_clause = " ORDER BY pano_id ASC"
-    full_query = base_query+mission_where_clause+mission_order_clause
+    full_query = base_query + mission_where_clause + mission_order_clause
 
     mission_name = mission_path.split("/")[-2]
     filename = f"{container}/{mission_path}{DUMP_FILENAME}"
@@ -66,7 +73,9 @@ def dump_increment(increment_path):
     :return: None
     """
 
-    fields = [field.name for field in Panoramas._meta.get_fields() if field.name != 'id']
+    fields = [
+        field.name for field in Panoramas._meta.get_fields() if field.name != "id"
+    ]
     table_name = Panoramas._meta.db_table
 
     query = f"SELECT {', '.join(fields)} FROM {table_name} ORDER BY pano_id ASC"
@@ -86,13 +95,23 @@ def restore_increment(increment_path):
     :return: None
     """
 
-    fields = [field.name for field in Panoramas._meta.get_fields() if field.name != 'id']
+    fields = [
+        field.name for field in Panoramas._meta.get_fields() if field.name != "id"
+    ]
     table_name = Panoramas._meta.db_table
 
-    copy_command = f"COPY {table_name} ({', '.join(fields)}) FROM  STDIN (FORMAT binary)"
+    copy_command = (
+        f"COPY {table_name} ({', '.join(fields)}) FROM  STDIN (FORMAT binary)"
+    )
     log.info(f"Restoring from {INCREMENTS_CONTAINER}/{increment_path}{DUMP_FILENAME}")
-    file = io.BytesIO(objectstore.get_panorama_store_object({'container': INCREMENTS_CONTAINER,
-                                                             'name': f"{increment_path}{DUMP_FILENAME}"}))
+    file = io.BytesIO(
+        objectstore.get_panorama_store_object(
+            {
+                "container": INCREMENTS_CONTAINER,
+                "name": f"{increment_path}{DUMP_FILENAME}",
+            }
+        )
+    )
     with connection.cursor() as cursor:
         cursor.copy_expert(copy_command, file)
 
@@ -128,5 +147,7 @@ def restore_all():
     reset_sequences([Panoramas])
 
     # restore root increment:
-    log.info(f"Rebuilding database from root increment as user {settings.PANORAMA_OBJECTSTORE_USER}")
+    log.info(
+        f"Rebuilding database from root increment as user {settings.PANORAMA_OBJECTSTORE_USER}"
+    )
     restore_increment("")

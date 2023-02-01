@@ -3,6 +3,7 @@ A collection of utils for dealing with query params
 """
 # Python
 import datetime
+
 # Packages
 from django.contrib.gis.geos import Point
 from django.utils.datastructures import MultiValueDictKeyError
@@ -22,13 +23,13 @@ def get_request_coord(query_params):
 
     Returns coordinates in WSG84 longitude,latitude
     """
-    if 'lat' in query_params and 'lon' in query_params:
-        lon = float(query_params['lon'])
-        lat = float(query_params['lat'])
+    if "lat" in query_params and "lon" in query_params:
+        lon = float(query_params["lon"])
+        lat = float(query_params["lat"])
         return lon, lat
-    elif 'x' in query_params and 'y' in query_params:
-        x = float(query_params['x'])
-        y = float(query_params['y'])
+    elif "x" in query_params and "y" in query_params:
+        x = float(query_params["x"])
+        y = float(query_params["y"])
         return _convert_coords(x, y, SRID_RD, SRID_WSG84)
     else:
         return None
@@ -66,14 +67,14 @@ def convert_to_date(request, param_name):
         return None
 
     input_date = request.query_params[param_name]
-    date_format = '%Y-%m-%d'  # Assume iso
+    date_format = "%Y-%m-%d"  # Assume iso
     if input_date.isdigit():
         # The next test will make it that timestamp from around 3 am on 1-1-1970
         # will be handled as dates. :
         # however this should not be an issue
         if len(input_date) == 4:
             # Only a year is given
-            date_format = '%Y'
+            date_format = "%Y"
         else:
             # Treat itas a timestamp
             try:
@@ -81,11 +82,11 @@ def convert_to_date(request, param_name):
             except OverflowError:  # Just to be on the safe side, you never know
                 date_obj = None
             return date_obj
-    elif '-' in input_date:
+    elif "-" in input_date:
         # A date string. Determinig format
-        if input_date.find('-') == 2:
+        if input_date.find("-") == 2:
             # EU format
-            date_format = '%d-%m-%Y'
+            date_format = "%d-%m-%Y"
     else:
         # Un-workable input
         return None
@@ -98,15 +99,15 @@ def convert_to_date(request, param_name):
     return date_obj
 
 
-def get_int_value(request, param_name, default, lower=0, upper=None, strategy='cutoff'):
+def get_int_value(request, param_name, default, lower=0, upper=None, strategy="cutoff"):
     try:
         value = int(request.query_params[param_name])
         if lower is None or lower <= value:
             if upper is None or value <= upper:
                 return value
-            elif strategy is 'cutoff' and upper is not None:
+            elif strategy is "cutoff" and upper is not None:
                 return upper
-            elif strategy is 'modulo' and upper is not None:
+            elif strategy is "modulo" and upper is not None:
                 return value % upper
     except (ValueError, MultiValueDictKeyError):
         pass
@@ -116,8 +117,7 @@ def get_int_value(request, param_name, default, lower=0, upper=None, strategy='c
 def get_float_value(request, param_name, default, lower=None, upper=None):
     try:
         value = float(request.query_params[param_name])
-        if (lower is None or lower <= value) \
-                and (upper is None or value <= upper):
+        if (lower is None or lower <= value) and (upper is None or value <= upper):
             return value
     except (ValueError, MultiValueDictKeyError):
         pass

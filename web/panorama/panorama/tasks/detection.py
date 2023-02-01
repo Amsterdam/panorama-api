@@ -24,24 +24,51 @@ def region_writer(panorama: Panoramas, lp=False, dlib=False, google=False):
     writer = csv.writer(output)
 
     regions = Region.objects.filter(pano_id=panorama.pano_id)
-    writer.writerow(['region_type', 'left_top_x', 'left_top_y', 'right_top_x', 'right_top_y', 'right_bottom_x',
-                     'right_bottom_y', 'left_bottom_x', 'left_bottom_y', 'detected_by'])
+    writer.writerow(
+        [
+            "region_type",
+            "left_top_x",
+            "left_top_y",
+            "right_top_x",
+            "right_top_y",
+            "right_bottom_x",
+            "right_bottom_y",
+            "left_bottom_x",
+            "left_bottom_y",
+            "detected_by",
+        ]
+    )
     for region in regions:
-        writer.writerow([region.region_type, region.left_top_x, region.left_top_y, region.right_top_x,
-                         region.right_top_y, region.right_bottom_x, region.right_bottom_y, region.left_bottom_x,
-                         region.left_bottom_y, region.detected_by])
+        writer.writerow(
+            [
+                region.region_type,
+                region.left_top_x,
+                region.left_top_y,
+                region.right_top_x,
+                region.right_top_y,
+                region.right_bottom_x,
+                region.right_bottom_y,
+                region.left_bottom_x,
+                region.left_bottom_y,
+                region.detected_by,
+            ]
+        )
 
-    suffix = 'd' if dlib else ('g' if google else '')
+    suffix = "d" if dlib else ("g" if google else "")
     if lp:
-        csv_name = 'results/{}{}/regions_lp.csv'.format(panorama.path, panorama.filename[:-4])
+        csv_name = "results/{}{}/regions_lp.csv".format(
+            panorama.path, panorama.filename[:-4]
+        )
     else:
-        csv_name = 'results/{}{}/regions_f{}.csv'.format(panorama.path, panorama.filename[:-4], suffix)
-    log.warning('saving {}'.format(csv_name))
+        csv_name = "results/{}{}/regions_f{}.csv".format(
+            panorama.path, panorama.filename[:-4], suffix
+        )
+    log.warning("saving {}".format(csv_name))
 
-    object_store.put_into_datapunt_store(csv_name, output.getvalue(), 'text/csv')
+    object_store.put_into_datapunt_store(csv_name, output.getvalue(), "text/csv")
 
 
-def save_regions(regions, panorama: Panoramas, region_type='G'):
+def save_regions(regions, panorama: Panoramas, region_type="G"):
     models = []
     for region in regions:
         rg = Region()

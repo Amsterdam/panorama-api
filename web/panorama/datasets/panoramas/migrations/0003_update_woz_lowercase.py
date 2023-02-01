@@ -17,7 +17,7 @@ WHERE
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('panoramas', '0002_unmanaged_models'),
+        ("panoramas", "0002_unmanaged_models"),
     ]
 
     operations = [

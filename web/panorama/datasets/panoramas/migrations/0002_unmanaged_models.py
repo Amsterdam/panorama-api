@@ -10,40 +10,98 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('panoramas', '0001_initial_squashed_db_migrations'),
+        ("panoramas", "0001_initial_squashed_db_migrations"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Adjacencies',
+            name="Adjacencies",
             fields=[
-                ('status', model_utils.fields.StatusField(choices=[('to_be_rendered', 'to_be_rendered'), ('rendering', 'rendering'), ('rendered', 'rendered'), ('detecting_regions', 'detecting_regions'), ('detected', 'detected'), ('blurring', 'blurring'), ('done', 'done')], default='to_be_rendered', max_length=100, no_check_for_status=True, verbose_name='status')),
-                ('status_changed', model_utils.fields.MonitorField(default=django.utils.timezone.now, monitor='status', verbose_name='status changed')),
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('pano_id', models.CharField(db_index=True, max_length=37, unique=True)),
-                ('timestamp', models.DateTimeField()),
-                ('filename', models.CharField(max_length=255)),
-                ('path', models.CharField(max_length=400)),
-                ('geolocation', django.contrib.gis.db.models.fields.PointField(dim=3, srid=4326)),
-                ('_geolocation_2d', django.contrib.gis.db.models.fields.PointField(null=True, srid=4326)),
-                ('_geolocation_2d_rd', django.contrib.gis.db.models.fields.PointField(null=True, srid=28992)),
-                ('surface_type', models.CharField(choices=[('L', 'land'), ('W', 'water')], default='L', max_length=1)),
-                ('mission_distance', models.IntegerField()),
-                ('mission_type', models.TextField(default='bi', max_length=16)),
-                ('mission_year', models.TextField(max_length=4, null=True)),
-                ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=32), blank=True, db_index=True, size=None)),
-                ('from_pano_id', models.CharField(max_length=37)),
-                ('from_geolocation_2d_rd', django.contrib.gis.db.models.fields.PointField(srid=28992)),
-                ('relative_distance', models.FloatField()),
-                ('relative_pitch', models.FloatField()),
-                ('relative_heading', models.FloatField()),
-                ('relative_elevation', models.FloatField()),
+                (
+                    "status",
+                    model_utils.fields.StatusField(
+                        choices=[
+                            ("to_be_rendered", "to_be_rendered"),
+                            ("rendering", "rendering"),
+                            ("rendered", "rendered"),
+                            ("detecting_regions", "detecting_regions"),
+                            ("detected", "detected"),
+                            ("blurring", "blurring"),
+                            ("done", "done"),
+                        ],
+                        default="to_be_rendered",
+                        max_length=100,
+                        no_check_for_status=True,
+                        verbose_name="status",
+                    ),
+                ),
+                (
+                    "status_changed",
+                    model_utils.fields.MonitorField(
+                        default=django.utils.timezone.now,
+                        monitor="status",
+                        verbose_name="status changed",
+                    ),
+                ),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "pano_id",
+                    models.CharField(db_index=True, max_length=37, unique=True),
+                ),
+                ("timestamp", models.DateTimeField()),
+                ("filename", models.CharField(max_length=255)),
+                ("path", models.CharField(max_length=400)),
+                (
+                    "geolocation",
+                    django.contrib.gis.db.models.fields.PointField(dim=3, srid=4326),
+                ),
+                (
+                    "_geolocation_2d",
+                    django.contrib.gis.db.models.fields.PointField(
+                        null=True, srid=4326
+                    ),
+                ),
+                (
+                    "_geolocation_2d_rd",
+                    django.contrib.gis.db.models.fields.PointField(
+                        null=True, srid=28992
+                    ),
+                ),
+                (
+                    "surface_type",
+                    models.CharField(
+                        choices=[("L", "land"), ("W", "water")],
+                        default="L",
+                        max_length=1,
+                    ),
+                ),
+                ("mission_distance", models.IntegerField()),
+                ("mission_type", models.TextField(default="bi", max_length=16)),
+                ("mission_year", models.TextField(max_length=4, null=True)),
+                (
+                    "tags",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=32),
+                        blank=True,
+                        db_index=True,
+                        size=None,
+                    ),
+                ),
+                ("from_pano_id", models.CharField(max_length=37)),
+                (
+                    "from_geolocation_2d_rd",
+                    django.contrib.gis.db.models.fields.PointField(srid=28992),
+                ),
+                ("relative_distance", models.FloatField()),
+                ("relative_pitch", models.FloatField()),
+                ("relative_heading", models.FloatField()),
+                ("relative_elevation", models.FloatField()),
             ],
             options={
-                'db_table': 'panoramas_adjacencies_new',
-                'ordering': ('id',),
-                'abstract': False,
-                'managed': False,
+                "db_table": "panoramas_adjacencies_new",
+                "ordering": ("id",),
+                "abstract": False,
+                "managed": False,
             },
         ),
     ]

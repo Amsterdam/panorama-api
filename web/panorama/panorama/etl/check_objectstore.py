@@ -2,8 +2,14 @@ import logging
 from swiftclient import ClientException
 
 from datasets.panoramas.models import EQUIRECTANGULAR_SUBPATH, FULL_IMAGE_NAME
-from panorama.etl.etl_settings import DUMP_FILENAME, SOURCE_LISTING_NAME, INTERMEDIATE_LISTING_NAME, BLURRED_LISTING_NAME, \
-    INCREMENTS_CONTAINER, INTERMEDIATE_CONTAINER
+from panorama.etl.etl_settings import (
+    DUMP_FILENAME,
+    SOURCE_LISTING_NAME,
+    INTERMEDIATE_LISTING_NAME,
+    BLURRED_LISTING_NAME,
+    INCREMENTS_CONTAINER,
+    INTERMEDIATE_CONTAINER,
+)
 from panorama.shared.object_store import ObjectStore
 
 panorama_images = {}
@@ -27,8 +33,10 @@ def panorama_image_file_exists(container, path, filename):
     key = f"{container}/{path}"
 
     if key not in panorama_images:
-        file_entries_in_source_dir = objectstore.get_panorama_store_objects(container, path)
-        panorama_images[key] = [file['name'] for file in file_entries_in_source_dir]
+        file_entries_in_source_dir = objectstore.get_panorama_store_objects(
+            container, path
+        )
+        panorama_images[key] = [file["name"] for file in file_entries_in_source_dir]
 
     return f"{path}/{filename}" in panorama_images[key]
 
@@ -46,8 +54,10 @@ def panorama_rendered_file_exists(container, path, filename):
     key = f"{container}/{path}"
 
     if key not in panorama_rendered:
-        file_entries_in_renderdir = objectstore.get_panorama_store_objects(INTERMEDIATE_CONTAINER, key)
-        panorama_rendered[key] = [file['name'] for file in file_entries_in_renderdir]
+        file_entries_in_renderdir = objectstore.get_panorama_store_objects(
+            INTERMEDIATE_CONTAINER, key
+        )
+        panorama_rendered[key] = [file["name"] for file in file_entries_in_renderdir]
 
     return f"{key}/{filename}" in panorama_rendered[key]
 
@@ -66,7 +76,7 @@ def panorama_blurred_file_exists(container, path, filename):
 
     if key not in panorama_blurred:
         file_entries_in_target_dir = objectstore.get_datapunt_store_objects(key)
-        panorama_blurred[key] = [file['name'] for file in file_entries_in_target_dir]
+        panorama_blurred[key] = [file["name"] for file in file_entries_in_target_dir]
 
     blurred_image = f"{key}/{filename[:-4]}{EQUIRECTANGULAR_SUBPATH}{FULL_IMAGE_NAME}"
     return blurred_image in panorama_blurred[key]
@@ -108,11 +118,15 @@ def _object_listings_for(container, path):
     source_obj_list = objectstore.get_panorama_store_objects(container, path)
     source_listing = _objlist_to_dirlisting(source_obj_list)
 
-    intermediate_obj_list = objectstore.get_panorama_store_objects(INTERMEDIATE_CONTAINER, f"{container}/{path}")
+    intermediate_obj_list = objectstore.get_panorama_store_objects(
+        INTERMEDIATE_CONTAINER, f"{container}/{path}"
+    )
     intermediate_listing = _objlist_to_dirlisting(intermediate_obj_list)
 
     blurred_obj_list = objectstore.get_datapunt_store_objects(f"{container}/{path}")
-    blurred_listing = _objlist_to_dirlisting([obj for obj in blurred_obj_list if "panorama_8000.jpg" in obj['name']])
+    blurred_listing = _objlist_to_dirlisting(
+        [obj for obj in blurred_obj_list if "panorama_8000.jpg" in obj["name"]]
+    )
 
     return source_listing, intermediate_listing, blurred_listing
 
@@ -125,16 +139,30 @@ def set_uptodate_info(container, path):
     :param path: source path (path to mission
     :return: None
     """
-    source_listing, intermediate_listing, blurred_listing = _object_listings_for(container, path)
+    source_listing, intermediate_listing, blurred_listing = _object_listings_for(
+        container, path
+    )
 
-    objectstore.put_into_panorama_store(INCREMENTS_CONTAINER, f"{container}/{path}{SOURCE_LISTING_NAME}",
-                                        source_listing, "text/plain")
+    objectstore.put_into_panorama_store(
+        INCREMENTS_CONTAINER,
+        f"{container}/{path}{SOURCE_LISTING_NAME}",
+        source_listing,
+        "text/plain",
+    )
 
-    objectstore.put_into_panorama_store(INCREMENTS_CONTAINER, f"{container}/{path}{INTERMEDIATE_LISTING_NAME}",
-                                        intermediate_listing, "text/plain")
+    objectstore.put_into_panorama_store(
+        INCREMENTS_CONTAINER,
+        f"{container}/{path}{INTERMEDIATE_LISTING_NAME}",
+        intermediate_listing,
+        "text/plain",
+    )
 
-    objectstore.put_into_panorama_store(INCREMENTS_CONTAINER, f"{container}/{path}{BLURRED_LISTING_NAME}",
-                                        blurred_listing, "text/plain")
+    objectstore.put_into_panorama_store(
+        INCREMENTS_CONTAINER,
+        f"{container}/{path}{BLURRED_LISTING_NAME}",
+        blurred_listing,
+        "text/plain",
+    )
 
 
 def increment_exists(increment_path):
@@ -143,8 +171,10 @@ def increment_exists(increment_path):
     :param increment_path: the path to check for existince of increment
     :return: True or False, depending on if the path contains an increment
     """
-    dirlist = objectstore.get_panorama_store_objects(INCREMENTS_CONTAINER, f"{increment_path}")
-    return f"{increment_path}{DUMP_FILENAME}" in [obj['name'] for obj in dirlist]
+    dirlist = objectstore.get_panorama_store_objects(
+        INCREMENTS_CONTAINER, f"{increment_path}"
+    )
+    return f"{increment_path}{DUMP_FILENAME}" in [obj["name"] for obj in dirlist]
 
 
 def is_increment_uptodate(container, path):
@@ -156,18 +186,31 @@ def is_increment_uptodate(container, path):
     :return: True or False
     """
 
-    source_listing, intermediate_listing, blurred_listing = _object_listings_for(container, path)
+    source_listing, intermediate_listing, blurred_listing = _object_listings_for(
+        container, path
+    )
 
-    metadata = {'container': INCREMENTS_CONTAINER, 'name': f"{container}/{path}{SOURCE_LISTING_NAME}"}
+    metadata = {
+        "container": INCREMENTS_CONTAINER,
+        "name": f"{container}/{path}{SOURCE_LISTING_NAME}",
+    }
     stored_source = _readsafe_object(metadata)
 
-    metadata = {'container': INCREMENTS_CONTAINER, 'name': f"{container}/{path}{INTERMEDIATE_LISTING_NAME}"}
+    metadata = {
+        "container": INCREMENTS_CONTAINER,
+        "name": f"{container}/{path}{INTERMEDIATE_LISTING_NAME}",
+    }
     stored_intermediate = _readsafe_object(metadata)
 
-    metadata = {'container': INCREMENTS_CONTAINER, 'name': f"{container}/{path}{BLURRED_LISTING_NAME}"}
+    metadata = {
+        "container": INCREMENTS_CONTAINER,
+        "name": f"{container}/{path}{BLURRED_LISTING_NAME}",
+    }
     stored_blurred = _readsafe_object(metadata)
 
-    return source_listing == stored_source and \
-           intermediate_listing == stored_intermediate and \
-           blurred_listing == stored_blurred and \
-           increment_exists(f"{container}/{path}")
+    return (
+        source_listing == stored_source
+        and intermediate_listing == stored_intermediate
+        and blurred_listing == stored_blurred
+        and increment_exists(f"{container}/{path}")
+    )
