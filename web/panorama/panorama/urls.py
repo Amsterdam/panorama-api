@@ -1,6 +1,6 @@
 # Packages
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from rest_framework import renderers
 from rest_framework import response
 from rest_framework import routers
@@ -37,7 +37,7 @@ panorama = PanoramaRouter()
 panorama.register("thumbnail", ThumbnailViewSet, basename="thumbnail")
 panorama.register("panoramas", PanoramasViewSet, basename="panoramas")
 
-APIS = [url(r"^panorama/", include(panorama.urls))]
+APIS = [re_path(r"^panorama/", include(panorama.urls))]
 
 
 @api_view()
@@ -48,13 +48,13 @@ def swagger_schema_view(request):
 
 
 urlpatterns = APIS + [
-    url(r"^status/", include("health.urls")),
-    url("^panorama/docs/$", swagger_schema_view),
+    re_path(r"^status/", include("health.urls")),
+    re_path("^panorama/docs/$", swagger_schema_view),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns += [
-        url(r"^__debug__/", include(debug_toolbar.urls)),
+        re_path(r"^__debug__/", include(debug_toolbar.urls)),
     ]

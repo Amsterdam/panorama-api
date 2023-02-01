@@ -1,8 +1,9 @@
 # Packages
-from django.conf.urls import url
+from django.urls import re_path
+
 # Project
 from . import views
 
 urlpatterns = [
-    url(r'^health$', views.health),
+    re_path(r"^health$", views.health),
 ]
