@@ -1,7 +1,10 @@
 import io
 
+from urllib.request import urlopen
+
+from django.conf import settings
+
 from numpy import squeeze, dsplit, dstack, array
-from scipy import misc
 from scipy.ndimage import map_coordinates
 from PIL import Image, ImageOps
 import cv2
@@ -85,8 +88,13 @@ def get_panorama_image(panorama_path):
 
     :param panorama_path: path of the image
     :return: PIL image
+
     """
-    return byte_array2image(object_store.get_datapunt_store_object(panorama_path))
+
+    response = urlopen(f"{settings.PANO_IMAGE_URL}/{panorama_path}")
+    imdata = response.read()
+
+    return byte_array2image(imdata)
 
 
 def get_rgb_channels_from_array_image(array_img):
@@ -108,7 +116,7 @@ def get_raw_panorama_as_rgb_array(panorama_path):
     :return: scipy image array, an array of three color channels
     """
     # read image as scipy rgb image array
-    panorama_array_image = misc.fromimage(get_raw_panorama_image(panorama_path))
+    panorama_array_image = Image.fromarray(get_raw_panorama_image(panorama_path))
     return get_rgb_channels_from_array_image(panorama_array_image)
 
 
@@ -123,6 +131,10 @@ def sample_rgb_array_image_as_array(coordinates, rgb_array):
     """
     x = coordinates[0]
     y = coordinates[1]
+
+    # XXX JJM scipy.misc.fromimage has been replaced by PIL.Image.fromarray
+    # Looks like this works, leave this comment here, so we know what happened
+    # if trouble arises.
 
     # resample each channel of the source image
     #   (this needs to be done 'per channel' because otherwise the map_coordinates method
@@ -152,9 +164,7 @@ def save_image(image, name, in_panorama_store=False):
     image.save(byte_array, format="JPEG", optimize=True, progressive=True)
     if in_panorama_store:
         container, name = name.split("/")[0], "/".join(name.split("/")[1:])
-        object_store.put_into_panorama_store(
-            container, name, byte_array.getvalue(), "image/jpeg"
-        )
+        object_store.put_into_panorama_store(container, name, byte_array.getvalue(), "image/jpeg")
     else:
         object_store.put_into_datapunt_store(name, byte_array.getvalue(), "image/jpeg")
 

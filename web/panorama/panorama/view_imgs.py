@@ -1,11 +1,12 @@
 from math import pi, radians, atan2, degrees, log, tan
+from typing import cast
 
 from django.http import HttpResponse, QueryDict, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from rest_framework import renderers
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from scipy import misc
+
 
 from datasets.panoramas.models import Panoramas
 from datasets.panoramas.serialize.serializers import ThumbnailSerializer
@@ -103,9 +104,7 @@ class ThumbnailViewSet(PanoramasViewSet):
 
         try:
             pano_id = pano_resultset.data["_embedded"]["panoramas"][0]["pano_id"]
-            location = pano_resultset.data["_embedded"]["panoramas"][0]["geometry"][
-                "coordinates"
-            ]
+            location = pano_resultset.data["_embedded"]["panoramas"][0]["geometry"]["coordinates"]
         except (IndexError):
             # No results were found
             return Response([], status=200)
@@ -166,15 +165,11 @@ class ThumbnailViewSet(PanoramasViewSet):
             request, "width", default=750, lower=1, upper=1600, strategy="cutoff"
         )
 
-        target_fov = get_int_value(
-            request, "fov", default=80, upper=120, strategy="cutoff"
-        )
+        target_fov = get_int_value(request, "fov", default=80, upper=120, strategy="cutoff")
 
         target_width, target_fov = self._max_fov_per_width(target_width, target_fov)
 
-        target_horizon = get_float_value(
-            request, "horizon", default=0.3, lower=0.0, upper=1.0
-        )
+        target_horizon = get_float_value(request, "horizon", default=0.3, lower=0.0, upper=1.0)
         target_aspect = get_float_value(request, "aspect", default=1.5, lower=1.0)
 
         pano = get_object_or_404(Panoramas, pano_id=pano_id)
@@ -188,7 +183,7 @@ class ThumbnailViewSet(PanoramasViewSet):
         )
 
         response = HttpResponse(content_type="image/jpeg")
-        misc.toimage(thumb_img).save(response, "JPEG")
+        thumb_img.save(cast(bytes, response), "JPEG")
         return response
 
     def _max_fov_per_width(self, width, fov):
