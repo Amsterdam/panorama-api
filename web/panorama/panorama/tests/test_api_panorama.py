@@ -41,9 +41,7 @@ class OpnameLocatieApiTest(PanoramaApiTest):
         self.assertNotIn("geolocation", response.data)
 
     def test_get_nearest_close_no_radius(self):
-        response = self.client.get(
-            "/panorama/panoramas/?near=4.8970,52.37795&radius=250"
-        )
+        response = self.client.get("/panorama/panoramas/?near=4.8970,52.37795&radius=250")
         self.assertEqual(response.status_code, 200)
         self.assertIn("pano_id", response.data["_embedded"]["panoramas"][0])
         self.assertEqual(
@@ -57,9 +55,7 @@ class OpnameLocatieApiTest(PanoramaApiTest):
         self.assertNotIn("pano_id", response.data)
 
     def test_get_nearest_close_radius(self):
-        response = self.client.get(
-            "/panorama/panoramas/?near=4.8970701,52.3779561&radius=200"
-        )
+        response = self.client.get("/panorama/panoramas/?near=4.8970701,52.3779561&radius=200")
         self.assertEqual(response.status_code, 200)
         self.assertIn("pano_id", response.data["_embedded"]["panoramas"][0])
         self.assertEqual(
@@ -73,9 +69,7 @@ class OpnameLocatieApiTest(PanoramaApiTest):
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("pano_id", response.data["_embedded"]["panoramas"][0])
-        self.assertEqual(
-            response.data["_embedded"]["panoramas"][0]["pano_id"], "PANO_1_2014"
-        )
+        self.assertEqual(response.data["_embedded"]["panoramas"][0]["pano_id"], "PANO_1_2014")
 
     def test_get_nearest_all_parameters(self):
         response = self.client.get(
