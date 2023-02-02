@@ -51,6 +51,7 @@ class RawCol(Expression):
 
 
 class PanoramaFilter(FilterSet):
+
     MAX_RADIUS = 100000  # meters
 
     DEFAULT_SRID = 4326
@@ -115,37 +116,26 @@ class PanoramaFilter(FilterSet):
             function="ST_MakePoint",
             output_field=GeometryField(),
         )
-        srid_point = Func(
-            postgis_point, srid, function="ST_SetSRID", output_field=GeometryField()
-        )
+        srid_point = Func(postgis_point, srid, function="ST_SetSRID", output_field=GeometryField())
         transformed_point = Func(
             srid_point, 28992, function="ST_Transform", output_field=GeometryField()
         )
 
-        queryset = queryset.filter(
-            _geolocation_2d_rd__dwithin=(transformed_point, D(m=radius))
-        )
+        queryset = queryset.filter(_geolocation_2d_rd__dwithin=(transformed_point, D(m=radius)))
 
         # Sort by indexed KNN distance, see https://postgis.net/docs/geometry_distance_knn.html
-        order_by_distance = CombinedExpression(
-            F("_geolocation_2d_rd"), "<->", transformed_point
-        )
+        order_by_distance = CombinedExpression(F("_geolocation_2d_rd"), "<->", transformed_point)
         return queryset.order_by(order_by_distance)
 
     def _coordinates_from_string(self, name, value, expected_coordinates):
         try:
-            coordinates = list(
-                map(lambda coordinate: float(coordinate), value.split(","))
-            )
+            coordinates = list(map(lambda coordinate: float(coordinate), value.split(",")))
         except ValueError:
-            raise ValueError(
-                "%s coordinates must be numbers, separated by commas" % name
-            )
+            raise ValueError("%s coordinates must be numbers, separated by commas" % name)
 
         if len(coordinates) != expected_coordinates:
             raise ValueError(
-                "%s coordinates must consist of %s numbers"
-                % (name, expected_coordinates)
+                "%s coordinates must consist of %s numbers" % (name, expected_coordinates)
             )
 
         return coordinates
@@ -232,8 +222,7 @@ class PanoramaFilter(FilterSet):
                 within=Func(
                     RawCol(queryset.model, "_geolocation_2d_rd"),
                     F("_geolocation_2d_rd"),
-                    RawCol(queryset.model, "mission_distance")
-                    - mission_distance_margin,
+                    RawCol(queryset.model, "mission_distance") - mission_distance_margin,
                     function="ST_DWithin",
                     output_field=models.BooleanField(),
                 )
@@ -248,9 +237,7 @@ class PanoramaFilter(FilterSet):
             try:
                 radius = float(self.data["radius"])
             except ValueError:
-                raise rest_serializers.ValidationError(
-                    "radius parameter must be a number"
-                )
+                raise rest_serializers.ValidationError("radius parameter must be a number")
 
             if radius > self.MAX_NEWEST_IN_RANGE_RADIUS:
                 raise rest_serializers.ValidationError(
@@ -277,15 +264,12 @@ class PanoramaFilter(FilterSet):
             except ValueError as e:
                 rest_serializers.ValidationError(str(e))
 
-            polygon = Polygon.from_bbox(
-                (bbox["x1"], bbox["y1"], bbox["x2"], bbox["y2"])
-            )
+            polygon = Polygon.from_bbox((bbox["x1"], bbox["y1"], bbox["x2"], bbox["y2"]))
             geometry = GEOSGeometry(polygon, srid=srid).transform(28992, clone=True)
 
             if geometry.area > max_area:
                 raise rest_serializers.ValidationError(
-                    "area for newest_in_range filter can be at most %s square meters"
-                    % max_area
+                    "area for newest_in_range filter can be at most %s square meters" % max_area
                 )
 
             # TODO: add padding to bbox with newest_in_range radius
@@ -299,13 +283,9 @@ class PanoramaFilter(FilterSet):
         if self._is_filter_enabled("mission_year"):
             exists = exists.filter(mission_year=OuterRef("mission_year"))
         if self._is_filter_enabled("timestamp_before"):
-            exists = exists.filter(
-                timestamp__lte=self._get_filter_string("timestamp_before")
-            )
+            exists = exists.filter(timestamp__lte=self._get_filter_string("timestamp_before"))
         if self._is_filter_enabled("timestamp_after"):
-            exists = exists.filter(
-                timestamp__gte=self._get_filter_string("timestamp_after")
-            )
+            exists = exists.filter(timestamp__gte=self._get_filter_string("timestamp_after"))
         if self._is_filter_enabled("tags"):
             tags = self._get_filter_string("tags")
             exists = exists.filter(tags__contains=tags.split(","))
@@ -353,9 +333,7 @@ class PanoramaFilter(FilterSet):
 class PanoramaFilterAdjacent(PanoramaFilter):
     DEFAULT_ADJACENT_RADIUS = 21
 
-    def __init__(
-        self, data=None, queryset=None, request=None, prefix=None, pano_id=None
-    ):
+    def __init__(self, data=None, queryset=None, request=None, prefix=None, pano_id=None):
         self.pano_id = pano_id
 
         if not ("radius" in data and data["radius"]):
@@ -404,7 +382,7 @@ class PanoramasViewSet(rest.DatapuntViewSet):
     pagination_class = HALPaginationEmbedded
 
     filter_backends = (DjangoFilterBackend,)
-    filter_class = PanoramaFilter
+    filterset_class = PanoramaFilter
 
     @action(detail=True)
     def adjacencies(self, request, pano_id):

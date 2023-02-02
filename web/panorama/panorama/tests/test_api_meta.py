@@ -1,5 +1,5 @@
 # Python
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
 # Packages
 from django.http import HttpResponse
@@ -31,6 +31,8 @@ class ApiMetasTest(PanoramaApiTest):
             "HTTP_HOST": "api.data.amsterdam.nl",
             "HTTP_ORIGIN": "https://foo.google.com",
         }
-        response = CorsMiddleware().process_response(request, HttpResponse())
-        self.assertTrue("access-control-allow-origin" in response._headers)
-        self.assertEquals("*", response._headers["access-control-allow-origin"][1])
+        response = CorsMiddleware(get_response=MagicMock()).process_response(
+            request, HttpResponse()
+        )
+        self.assertTrue("Access-Control-Allow-Origin" in response.headers)
+        self.assertEquals("*", response.headers["Access-Control-Allow-Origin"])
