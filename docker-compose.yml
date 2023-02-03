@@ -17,9 +17,6 @@ services:
       - "8087:8000"
     links:
       - database:database
-    volumes:
-      - $PWD/web/panorama/panoramas_test:/app/panoramas_test
-      - $PWD/test_output:/app/test_output
     environment:
       SECRET_KEY: hoi
       DB_NAME: panorama
