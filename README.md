@@ -24,7 +24,7 @@ Of:
 
     docker-compose up -d
 
-Je kunt ook het project lokaal op poort 8000 draaien, maar dat vereist op zijn minst de database-container:
+Je kunt ook het project lokaal op poort 8087 draaien, maar dat vereist op zijn minst de database-container:
 
     docker-compose up -d database
 
