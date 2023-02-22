@@ -6,6 +6,15 @@ Django settings for panorama project.
 import os
 import sys
 
+
+def str2bool(s):
+    # Util function, something like this was in
+    # `distutils`, but `distutils` has been removed
+    # from the stdlib.
+    TRUTHS = set(["True", "true", 1, "T", "t", "1"])
+    return s in TRUTHS
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -13,6 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 insecure_key = "insecure"
 SECRET_KEY = os.getenv("SECRET_KEY", insecure_key)
+
+#
+MINIMAL_HEALTH_CHECKS = str2bool(os.getenv("MINIMAL_HEALTH_CHECKS", "False"))
 
 DEBUG = SECRET_KEY == insecure_key
 
@@ -148,7 +160,7 @@ LOGGING = {
         },
         "django": {
             "handlers": ["console"],
-            "level": "ERROR",
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
         },
         # Debug all batch jobs
         "doc": {
