@@ -1,6 +1,7 @@
 """Panorama settings."""
 
 
+from pathlib import Path
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -15,10 +16,18 @@ from panorama.settings_databases import (
     OVERRIDE_PORT_ENV_VAR,
 )
 
+
+def get_db_password(env_var_name):
+
+    try:
+        password_file_path = os.environ[env_var_name]
+        return Path(password_file_path).read_text()
+    except KeyError:
+        return "insecure"
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PANO_IMAGE_URL = os.getenv(
-    "PANORAMA_IMAGE_URL", "https://acc.panorama.data.amsterdam.nl/panorama"
-)
+PANO_IMAGE_URL = os.getenv("PANORAMA_IMAGE_URL", "https://acc.panorama.data.amsterdam.nl/panorama")
 
 INSTALLED_APPS += [
     "datasets.panoramas",
@@ -51,7 +60,7 @@ DATABASE_OPTIONS = {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": os.getenv("DATABASE_NAME", "panorama"),
         "USER": os.getenv("DATABASE_USER", "panorama"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD", "insecure"),
+        "PASSWORD": get_db_password("DATABASE_PASSWORD_PATH"),
         "HOST": os.getenv(OVERRIDE_HOST_ENV_VAR),
         "PORT": os.getenv(OVERRIDE_PORT_ENV_VAR, "5432"),
     },
@@ -78,9 +87,7 @@ HEALTH_MODEL = "panoramas.Panoramas"
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 if SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=SENTRY_DSN, environment="panorama", integrations=[DjangoIntegration()]
-    )
+    sentry_sdk.init(dsn=SENTRY_DSN, environment="panorama", integrations=[DjangoIntegration()])
 
 # OBJECT_STORE SETTINGS
 
