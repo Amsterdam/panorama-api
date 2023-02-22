@@ -11,15 +11,17 @@ log = logging.getLogger(__name__)
 
 def health(request):
     # check database
+
+    if settings.MINIMAL_HEALTH_CHECKS:
+        return HttpResponse(b"Health OK", content_type="text/plain", status=200)
+
     try:
         with connection.cursor() as cursor:
             cursor.execute("select 1")
             assert cursor.fetchone()
     except:
         log.exception("Database connectivity failed")
-        return HttpResponse(
-            "Database connectivity failed", content_type="text/plain", status=500
-        )
+        return HttpResponse(b"Database connectivity failed", content_type="text/plain", status=500)
 
     try:
         with connection.cursor() as cursor:
@@ -30,16 +32,16 @@ def health(request):
     except:
         log.exception("Database panorama is not present")
         return HttpResponse(
-            "Database panorama is not present", content_type="text/plain", status=500
+            b"Database panorama is not present", content_type="text/plain", status=500
         )
 
     # check debug
     if settings.DEBUG:
         log.exception("Debug mode not allowed in production")
         return HttpResponse(
-            "Debug mode not allowed in production",
+            b"Debug mode not allowed in production",
             content_type="text/plain",
             status=500,
         )
 
-    return HttpResponse("Health OK", content_type="text/plain", status=200)
+    return HttpResponse(b"Health OK", content_type="text/plain", status=200)
