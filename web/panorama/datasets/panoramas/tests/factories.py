@@ -5,7 +5,7 @@ from .. import models
 
 class PanoramaFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = models.Panoramas
+        model = models.Panorama
 
 
 class TrajectFactory(factory.django.DjangoModelFactory):

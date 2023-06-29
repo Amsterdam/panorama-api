@@ -11,7 +11,7 @@ from datasets.panoramas.serialize.hal_serializer import (
     IdentityLinksField,
     HALListSerializer,
 )
-from datasets.panoramas.models import Panoramas, Adjacencies
+from datasets.panoramas.models import Panorama, Adjacencies
 
 log = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class PanoSerializer(HALSerializer):
     geometry = fields.GeometryField(source="geolocation")
 
     class Meta(HALSerializer.Meta):
-        model = Panoramas
+        model = Panorama
         listresults_field = "panoramas"
         list_serializer_class = HALListSerializer
         exclude = (
@@ -115,5 +115,5 @@ class ThumbnailSerializer(serializers.ModelSerializer):
     url = serializers.ReadOnlyField()
 
     class Meta:
-        model = Panoramas
+        model = Panorama
         fields = ("url", "heading", "pano_id")

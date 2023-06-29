@@ -9,7 +9,7 @@ import factory.fuzzy
 from rest_framework.test import APITestCase
 
 # Project
-from datasets.panoramas.models import Panoramas
+from datasets.panoramas.models import Panorama
 from datasets.panoramas.tests import factories
 
 
@@ -20,7 +20,7 @@ class PanoramaApiTest(APITestCase):
         # Adding locations
         factories.PanoramaFactory.create(
             pano_id="PANO_1_2014",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=factory.fuzzy.FuzzyDateTime(
                 datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
             ),
@@ -37,7 +37,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_2_2014_CLOSE",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=factory.fuzzy.FuzzyDateTime(
                 datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
             ),
@@ -54,7 +54,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_3_2015_CLOSE",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=factory.fuzzy.FuzzyDateTime(
                 datetime.datetime(2015, 1, 1, tzinfo=UTC_TZ), force_year=2015
             ),
@@ -71,7 +71,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_5_2014_CLOSE_BUT_NO_CIGAR",
-            status=Panoramas.STATUS.detected,
+            status=Panorama.STATUS.detected,
             timestamp=factory.fuzzy.FuzzyDateTime(
                 datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
             ),
@@ -88,7 +88,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_5_2015_CLOSE_BUT_NO_CIGAR",
-            status=Panoramas.STATUS.to_be_rendered,
+            status=Panorama.STATUS.to_be_rendered,
             timestamp=factory.fuzzy.FuzzyDateTime(
                 datetime.datetime(2015, 1, 1, tzinfo=UTC_TZ), force_year=2015
             ),
@@ -105,7 +105,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_6_2016_CLOSE",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=datetime.datetime(2016, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
@@ -120,7 +120,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_7_2016_CLOSE_BUT_NO_CIGAR",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=datetime.datetime(2016, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
@@ -135,7 +135,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_8_2017_CLOSE",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=datetime.datetime(2017, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
@@ -150,7 +150,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_9_2017_CLOSE_BUT_NO_CIGAR",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=datetime.datetime(2017, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
@@ -165,7 +165,7 @@ class PanoramaApiTest(APITestCase):
         )
         factories.PanoramaFactory.create(
             pano_id="PANO_WOZ_2018",
-            status=Panoramas.STATUS.done,
+            status=Panorama.STATUS.done,
             timestamp=datetime.datetime(2018, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),

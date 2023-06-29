@@ -8,10 +8,10 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 
-from datasets.panoramas.models import Panoramas
+from datasets.panoramas.models import Panorama
 from datasets.panoramas.serialize.serializers import ThumbnailSerializer
 from panorama.transform.thumbnail import Thumbnail
-from panorama.views import PanoramasViewSet
+from panorama.views import PanoramaViewSet
 from .queryparam_utils import get_float_value, get_int_value, get_request_coord
 
 
@@ -27,7 +27,7 @@ class ImgRenderer(renderers.BaseRenderer):
         pass
 
 
-class ThumbnailViewSet(PanoramasViewSet):
+class ThumbnailViewSet(PanoramaViewSet):
 
     """
     View to retrieve thumbs of a panorama
@@ -96,7 +96,7 @@ class ThumbnailViewSet(PanoramasViewSet):
         if "radius" not in request._request.GET:
             request._request.GET["radius"] = "20"
 
-        pano_view = PanoramasViewSet.as_view({"get": "list"})
+        pano_view = PanoramaViewSet.as_view({"get": "list"})
         pano_resultset = pano_view(request._request, **kwargs)
 
         if pano_resultset.status_code != 200:
@@ -172,7 +172,7 @@ class ThumbnailViewSet(PanoramasViewSet):
         target_horizon = get_float_value(request, "horizon", default=0.3, lower=0.0, upper=1.0)
         target_aspect = get_float_value(request, "aspect", default=1.5, lower=1.0)
 
-        pano = get_object_or_404(Panoramas, pano_id=pano_id)
+        pano = get_object_or_404(Panorama, pano_id=pano_id)
         thumb = Thumbnail(pano)
         thumb_img = thumb.get_image(
             target_width=target_width,
