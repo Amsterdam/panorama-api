@@ -21,7 +21,7 @@ from datasets.panoramas.serialize.hal_serializer import (
     HALPaginationEmbedded,
     simple_hal_embed,
 )
-from datasets.panoramas.models import Panoramas, Adjacencies
+from datasets.panoramas.models import Panorama, Adjacencies
 from datasets.panoramas.serialize.serializers import (
     PanoSerializer,
     AdjacentPanoSerializer,
@@ -82,7 +82,7 @@ class PanoramaFilter(FilterSet):
     tags = filters.CharFilter(method="tags_filter", label="Tags")
 
     class Meta(object):
-        model = Panoramas
+        model = Panorama
 
         # when adding new filter-fields remember to add them as well to the inner-query `exists` in
         #   the method `newest_in_range_filter`
@@ -360,7 +360,7 @@ class PanoramaFilterAdjacent(PanoramaFilter):
         ).filter(within=True)
 
 
-class PanoramasViewSet(rest.DatapuntViewSet):
+class PanoramaViewSet(rest.DatapuntViewSet):
     """
     Parameters:
 
@@ -376,7 +376,7 @@ class PanoramasViewSet(rest.DatapuntViewSet):
     """
 
     lookup_field = "pano_id"
-    queryset = Panoramas.done.all()
+    queryset = Panorama.done.all()
     serializer_detail_class = PanoSerializer
     serializer_class = PanoSerializer
     pagination_class = HALPaginationEmbedded
