@@ -35,7 +35,7 @@ class PanoramaRouter(routers.DefaultRouter):
 
 panorama = PanoramaRouter()
 panorama.register("thumbnail", ThumbnailViewSet, basename="thumbnail")
-panorama.register("panoramas", PanoramaViewSet, basename="panoramas")
+panorama.register("panoramas", PanoramaViewSet, basename="panorama")
 
 APIS = [re_path(r"^panorama/", include(panorama.urls))]
 
