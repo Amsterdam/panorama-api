@@ -37,7 +37,7 @@ class PanoSerializer(HALSerializer):
         read_only=True,
     )
     adjacencies = IdentityLinksField(
-        view_name="panoramas-adjacencies",
+        view_name="panorama-adjacencies",
         lookup_field="pano_id",
         format="html",
         read_only=True,
