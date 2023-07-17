@@ -78,13 +78,13 @@ class AdjacentPanoSerializer(PanoSerializer):
     serializer_url_field = AdjacentLink
     adjacencies = None
     adjacent = IdentityLinksField(
-        view_name="panoramas-detail",
+        view_name="panorama-detail",
         lookup_field="pano_id",
         format="html",
         read_only=True,
     )
     transitive_adjacencies = IdentityLinksField(
-        view_name="panoramas-adjacencies",
+        view_name="panorama-adjacencies",
         lookup_field="pano_id",
         format="html",
         read_only=True,
