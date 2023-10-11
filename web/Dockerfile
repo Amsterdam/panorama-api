@@ -27,6 +27,7 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/pyth
 
 WORKDIR /app
 COPY panorama ./
+COPY deploy /deploy/
 
 ENV DJANGO_SETTINGS_MODULE=panorama.settings DJANGO_DEBUG=false
 RUN python manage.py collectstatic --noinput
