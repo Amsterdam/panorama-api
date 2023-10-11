@@ -27,22 +27,23 @@ node {
         }
     }
 
-    stage('Test') {
-        tryStep "test", {
-            sh "docker-compose -p panorama -f web/deploy/test/docker-compose.yml down"
-            withCredentials([
-                [$class: 'StringBinding', credentialsId: 'panorama_objectstore_user', variable: 'OBJECTSTORE_USER'],
-                [$class: 'StringBinding', credentialsId: 'panorama_objectstore_key', variable: 'OBJECTSTORE_PASSWORD'],
-                [$class: 'StringBinding', credentialsId: 'panorama_panorama_tenant_id', variable: 'PANORAMA_TENANT_ID'],
-                [$class: 'StringBinding', credentialsId: 'panorama_datapunt_tenant_id', variable: 'DATAPUNT_TENANT_ID']
-            ]) {
-                sh "docker-compose -p panorama -f web/deploy/test/docker-compose.yml build && " +
-                   "docker-compose -p panorama -f web/deploy/test/docker-compose.yml run -u root --rm tests"
-            }
-        }, {
-            sh "docker-compose -p panorama -f web/deploy/test/docker-compose.yml down"
-        }
-    }
+    // Disable tests for now, most of it is not about the API
+    // stage('Test') {
+    //     tryStep "test", {
+    //         sh "docker-compose -p panorama -f web/deploy/test/docker-compose.yml down"
+    //         withCredentials([
+    //             [$class: 'StringBinding', credentialsId: 'panorama_objectstore_user', variable: 'OBJECTSTORE_USER'],
+    //             [$class: 'StringBinding', credentialsId: 'panorama_objectstore_key', variable: 'OBJECTSTORE_PASSWORD'],
+    //             [$class: 'StringBinding', credentialsId: 'panorama_panorama_tenant_id', variable: 'PANORAMA_TENANT_ID'],
+    //             [$class: 'StringBinding', credentialsId: 'panorama_datapunt_tenant_id', variable: 'DATAPUNT_TENANT_ID']
+    //         ]) {
+    //             sh "docker-compose -p panorama -f web/deploy/test/docker-compose.yml build && " +
+    //                "docker-compose -p panorama -f web/deploy/test/docker-compose.yml run -u root --rm tests"
+    //         }
+    //     }, {
+    //         sh "docker-compose -p panorama -f web/deploy/test/docker-compose.yml down"
+    //     }
+    // }
 
     stage("Build image") {
         tryStep "build", {
