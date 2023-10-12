@@ -23,7 +23,7 @@ def get_db_password(env_var_name):
         password_file_path = os.environ[env_var_name]
         return Path(password_file_path).read_text()
     except KeyError:
-        return "insecure"
+        os.getenv('DATABASE_PASSWORD', 'insecure')
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
