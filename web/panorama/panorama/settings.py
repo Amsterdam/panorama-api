@@ -24,9 +24,7 @@ def get_db_password(env_var_name):
         return Path(password_file_path).read_text()
     except KeyError:
         try:
-            pwd = os.getenv('DATABASE_PASSWORD', 'insecure')
-            print(pwd)
-            return pwd
+            return os.getenv('DATABASE_PASSWORD', 'insecure')
         except Exception:
             raise
 
