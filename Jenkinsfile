@@ -78,7 +78,7 @@ if (BRANCH == "master") {
                 parameters: [
                     [$class: 'StringParameterValue', name: 'INVENTORY', value: 'acceptance'],
                     [$class: 'StringParameterValue', name: 'PLAYBOOK', value: "${PLAYBOOK}"],
-                    [$class: 'StringParameterValue', name: 'PLAYBOOKPARAMS', value: "-e cmdb_id=app_panorama_api"],
+                    [$class: 'StringParameterValue', name: 'PLAYBOOKPARAMS', value: "-e cmdb_id=app_panorama"],
                 ]
             }
         }
@@ -109,7 +109,7 @@ if (BRANCH == "master") {
                 parameters: [
                     [$class: 'StringParameterValue', name: 'INVENTORY', value: 'production'],
                     [$class: 'StringParameterValue', name: 'PLAYBOOK', value: "${PLAYBOOK}"],
-                    [$class: 'StringParameterValue', name: 'PLAYBOOKPARAMS', value: "-e cmdb_id=app_panorama_api"],
+                    [$class: 'StringParameterValue', name: 'PLAYBOOKPARAMS', value: "-e cmdb_id=app_panorama"],
                 ]
             }
         }
