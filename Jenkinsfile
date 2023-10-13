@@ -48,7 +48,7 @@ node {
     stage("Build image") {
         tryStep "build", {
                 docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
-                def image = docker.build("datapunt/panorama_api:${env.BUILD_NUMBER}", "web")
+                def image = docker.build("datapunt/panorama:${env.BUILD_NUMBER}", "web")
                 image.push()
             }
         }
@@ -63,7 +63,7 @@ if (BRANCH == "master") {
         stage('Push acceptance image') {
             tryStep "image tagging", {
                 docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
-                    def image = docker.image("datapunt/panorama_api:${env.BUILD_NUMBER}")
+                    def image = docker.image("datapunt/panorama:${env.BUILD_NUMBER}")
                     image.pull()
                     image.push("acceptance")
                 }
@@ -93,7 +93,7 @@ if (BRANCH == "master") {
         stage('Push production image') {
             tryStep "image tagging", {
                 docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
-                    def image = docker.image("datapunt/panorama_api:${env.BUILD_NUMBER}")
+                    def image = docker.image("datapunt/panorama:${env.BUILD_NUMBER}")
                     image.pull()
                     image.push("production")
                     image.push("latest")
