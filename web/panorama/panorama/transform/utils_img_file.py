@@ -4,9 +4,7 @@ from urllib.request import urlopen
 
 from django.conf import settings
 
-from numpy import squeeze, dsplit, dstack, array
-from scipy.ndimage import map_coordinates
-from PIL import Image, ImageOps
+from PIL import Image
 
 from panorama.shared.object_store import ObjectStore
 
@@ -16,32 +14,6 @@ SAMPLE_WIDTH = 480
 SAMPLE_HEIGHT = 320
 
 object_store = ObjectStore()
-
-
-def image2byte_array(image: Image, quality=80):
-    """
-    Translate PIL image to byte array
-    :param image: PIL image
-    :return: bytearray
-    """
-    img_byte_array = io.BytesIO()
-    image.save(img_byte_array, quality=quality, format="JPEG")
-    return img_byte_array.getvalue()
-
-
-def image2byte_array_sized(image: Image, size=1000000):
-    """
-    Translate PIL image to byte array with maximum file size (deault 1MB)
-    :param image: the PIL image
-    :param size: maximum file size
-    :return:
-    """
-    for quality in range(80, 0, -10):
-        byte_array = image2byte_array(image, quality=quality)
-        if len(byte_array) < size:
-            return byte_array
-
-    raise Exception("Could not create small enough image")
 
 
 def byte_array2image(byte_array):
@@ -69,18 +41,6 @@ def get_raw_panorama_image(panorama_path):
     return byte_array2image(object_store.get_panorama_store_object(objectstore_id))
 
 
-def get_intermediate_panorama_image(panorama_path):
-    """
-    Gets the rendered, but un-blurred intermediate image from the
-
-    :param panorama_path: path of the image
-    :return: PIL image
-    """
-
-    objectstore_id = {"container": "intermediate", "name": panorama_path}
-    return byte_array2image(object_store.get_panorama_store_object(objectstore_id))
-
-
 def get_panorama_image(panorama_path):
     """
     Gets the rendered, blurred result image of the panorama
@@ -94,89 +54,6 @@ def get_panorama_image(panorama_path):
     imdata = response.read()
 
     return byte_array2image(imdata)
-
-
-def get_rgb_channels_from_array_image(array_img):
-    """
-    Orders the dimensions of the scipy image array around, so that it becomes an array of three color channels
-
-    :param array_img: image array
-    :return: reordered image array
-    """
-    # split image in the 3 RGB channels
-    return squeeze(dsplit(array_img, 3))
-
-
-def get_raw_panorama_as_rgb_array(panorama_path):
-    """
-    Gets the raw image prepared for calculations.
-
-    :param panorama_path: path of the image
-    :return: scipy image array, an array of three color channels
-    """
-    # read image as scipy rgb image array
-    panorama_array_image = Image.fromarray(get_raw_panorama_image(panorama_path))
-    return get_rgb_channels_from_array_image(panorama_array_image)
-
-
-def sample_rgb_array_image_as_array(coordinates, rgb_array):
-    """
-    Resampling of the source image
-
-    :param coordinates: meshgrid of numpy arrays where eacht target coordinate is mapped to a coordinateset
-    of the source
-    :param rgb_array: the source image as a scipy rgb array representation
-    :return: the sampled target image as a scipy rgb array representation
-    """
-    x = coordinates[0]
-    y = coordinates[1]
-
-    # XXX JJM scipy.misc.fromimage has been replaced by PIL.Image.fromarray
-    # Looks like this works, leave this comment here, so we know what happened
-    # if trouble arises.
-
-    # resample each channel of the source image
-    #   (this needs to be done 'per channel' because otherwise the map_coordinates method
-    #    works on the wrong dimension: in rgb_array_images from scipy.misc.fromimage the
-    #    first dimension is the channel (r, g and b), and 2nd and 3rd dimensions are y and x,
-    #    but map_coordinates expects the the coordinates to map to to be 1st and 2nd, therefore
-    #    we extract each channel, so that y and x become 1st and 2nd array), after resampling
-    #    we stack the three channels on top of each other, to restore the rgb image array
-
-    r = map_coordinates(rgb_array[0], [y, x], order=1)
-    g = map_coordinates(rgb_array[1], [y, x], order=1)
-    b = map_coordinates(rgb_array[2], [y, x], order=1)
-
-    # merge channels
-    return dstack((r, g, b))
-
-
-def save_image(image, name, in_panorama_store=False):
-    """
-    Save an PIL image in the objectstore
-
-    :param image: PIL image to save
-    :param name: path to save the image at
-    :param in_panorama_store: flag for choosing specific store
-    """
-    byte_array = io.BytesIO()
-    image.save(byte_array, format="JPEG", optimize=True, progressive=True)
-    if in_panorama_store:
-        container, name = name.split("/")[0], "/".join(name.split("/")[1:])
-        object_store.put_into_panorama_store(container, name, byte_array.getvalue(), "image/jpeg")
-    else:
-        object_store.put_into_datapunt_store(name, byte_array.getvalue(), "image/jpeg")
-
-
-def save_array_image(array_img, name, in_panorama_store=False):
-    """
-    Save a scipy image array in the objectstore
-
-    :param array_img: scipy image array to save
-    :param name: path to save the image at
-    :param in_panorama_store: flag for choosing specific store
-    """
-    save_image(Image.fromarray(array_img), name, in_panorama_store)
 
 
 def roll_left(image, shift, width, height):
