@@ -43,7 +43,3 @@ Roep de Django-applicatie expliciet aan, en zorg dat OBJECTSTORE_PASSWORD als om
 
 Op [http://localhost:8088/demo](http://localhost:8088/demo) draaien de equidistante panorama's in Marzipano viewer.
 Op [http://localhost:8088/demo/cubic.html](http://localhost:8088/demo/cubic.html) draaien de kubische projecties van de panorama's in Marzipano viewer.
-
-## Gedistribueerd beeldbewerking en beeldherkenning
-
-Zie `.swarm/readme.md` in dit project voor meer informatie
