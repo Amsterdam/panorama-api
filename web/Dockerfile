@@ -26,6 +26,8 @@ COPY --from=builder /usr/local/bin/ /usr/local/bin/
 COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
 
 WORKDIR /app
+# Temporary fix for unprotected thumbnails
+COPY dummy-thumbnail.jpg ./
 COPY panorama ./
 COPY deploy /deploy/
 
