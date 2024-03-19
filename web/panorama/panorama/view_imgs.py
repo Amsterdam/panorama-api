@@ -1,6 +1,7 @@
 from math import pi, radians, atan2, degrees, log, tan
 from typing import cast
 
+
 from django.http import HttpResponse, QueryDict, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from rest_framework import renderers
@@ -157,6 +158,13 @@ class ThumbnailViewSet(PanoramaViewSet):
         return degrees(atan2(d_lon, d_phi)) % 360.0
 
     def retrieve(self, request, pano_id=None, heading=0):
+        # Temporary fix to return dummy image instead of unprotected thumbnail
+        from PIL import Image
+        response = HttpResponse(content_type="image/jpeg")
+        image = Image.open("../dummy-thumbnail.jpg")
+        image.save(response, "JPEG")
+        return response
+
         target_heading = get_int_value(
             request, "heading", default=heading, upper=360, strategy="modulo"
         )
