@@ -161,7 +161,7 @@ class ThumbnailViewSet(PanoramaViewSet):
         # Temporary fix to return dummy image instead of unprotected thumbnail
         from PIL import Image
         response = HttpResponse(content_type="image/jpeg")
-        image = Image.open("../dummy-thumbnail.jpg")
+        image = Image.open("/app/dummy-thumbnail.jpg")
         image.save(response, "JPEG")
         return response
 
