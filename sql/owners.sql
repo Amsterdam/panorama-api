@@ -1,0 +1,17 @@
+ALTER TABLE public.cache_container OWNER TO panorama_owner;
+ALTER TABLE public.django_content_type OWNER TO panorama_owner;
+ALTER TABLE public.django_content_type_id_seq OWNER TO panorama_owner;
+ALTER TABLE public.django_migrations OWNER TO panorama_owner;
+ALTER TABLE public.django_migrations_id_seq OWNER TO panorama_owner;
+ALTER TABLE public.django_session OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_panorama OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_adjacencies_new OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_mission OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_mission_id_seq OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_panorama_id_seq OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_region OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_region_id_seq OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_traject OWNER TO panorama_owner;
+ALTER TABLE public.panoramas_traject_id_seq OWNER TO panorama_owner;
+ALTER FUNCTION public.rand() OWNER TO panorama_owner;
+ALTER FUNCTION public.substring_index(text, text, integer) OWNER TO panorama_owner;
