@@ -4,6 +4,8 @@ Django settings for panorama project.
 """
 
 import os
+from os import environ as env
+from pathlib import Path
 import sys
 
 
@@ -15,13 +17,21 @@ def str2bool(s):
     return s in TRUTHS
 
 
+def get_path_variable(env_var, default=""):
+    """Utility function to get a secret from the filesystem."""
+    path = env.get(env_var)
+    if path is None:
+        return default
+    return Path(path).read_text()
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
 insecure_key = "insecure"
-SECRET_KEY = os.getenv("SECRET_KEY", insecure_key)
+SECRET_KEY = get_path_variable("SECRET_KEY_PATH", env.get('SECRET_KEY', insecure_key))
 
 #
 MINIMAL_HEALTH_CHECKS = str2bool(os.getenv("MINIMAL_HEALTH_CHECKS", "False"))
