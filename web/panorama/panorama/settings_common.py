@@ -36,7 +36,7 @@ SECRET_KEY = get_path_variable("SECRET_KEY_PATH", env.get('SECRET_KEY', insecure
 #
 MINIMAL_HEALTH_CHECKS = str2bool(os.getenv("MINIMAL_HEALTH_CHECKS", "False"))
 
-DEBUG = SECRET_KEY == insecure_key
+DEBUG = env.get('DEBUG', False)
 
 ALLOWED_HOSTS = ["*"]
 
