@@ -1,0 +1,29 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+    - features/**
+  pull_request:
+    branches:
+    - main
+    - master
+
+jobs:
+  docker:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Start containers
+      run: docker compose -f "docker-compose.yml" up database web -d --build
+
+    - name: Run tests
+      run: docker compose exec -T web ./manage.py test
+    
+    - name: Stop containers
+      if: always()
+      run: docker compose -f "docker-compose.yml" down
