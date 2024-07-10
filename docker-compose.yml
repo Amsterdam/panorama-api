@@ -1,25 +1,38 @@
 version: "3.7"
 services:
   database:
-    image: amsterdam/postgres11
+    image: postgis/postgis:14-3.2
+    restart: always
+    user: postgres
+    shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "$${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 2s
+      timeout: 60s
+      retries: 5
+      start_period: 1s  
     ports:
-      - "5454:5432"
+       - "5414:5432"
     environment:
-      POSTGRES_PASSWORD: insecure
       POSTGRES_DB: panorama
-      POSTGRES_USER: panorama
-    volumes:
-      - "~/.ssh/datapunt.key:/root/.ssh/datapunt.key"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: insecure
+    command: ["postgres", "-c", "log_statement=all"]
 
   web:
     build: ./web
     ports:
       - "8087:8000"
     links:
-      - database:database
+      - database
+    depends_on:
+      database:
+        condition: service_healthy
     environment:
-      SECRET_KEY: hoi
-      DB_NAME: panorama
+      SECRET_KEY: insecure
+      DATABASE_PORT: 5414
+      DATABASE_NAME: panorama
+      DATABASE_USER: postgres
       DB_PASSWORD: insecure
       PANORAMA_IMAGE_URL: https://acc.panorama.data.amsterdam.nl/panorama
       OBJECTSTORE_USER:
