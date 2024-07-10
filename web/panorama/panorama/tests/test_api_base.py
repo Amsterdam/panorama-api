@@ -169,7 +169,7 @@ class PanoramaApiTest(APITestCase):
             timestamp=datetime.datetime(2018, 5, 5, tzinfo=UTC_TZ),
             filename=factory.fuzzy.FuzzyText(length=30),
             path=factory.fuzzy.FuzzyText(length=30),
-            geolocation=Point(4.897071, 52.377956, 10),
+            geolocation=Point(4.897071, 52.37956, 10),
             roll=factory.fuzzy.FuzzyFloat(-10, 10),
             pitch=factory.fuzzy.FuzzyFloat(-10, 10),
             heading=factory.fuzzy.FuzzyFloat(-10, 10),
