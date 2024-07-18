@@ -30,7 +30,7 @@ psycopg2==2.9.5
 python-swiftclient==4.1.0
 pytz==2022.7.1
 requests==2.32.0
-sentry-sdk==1.14.0
+sentry-sdk==2.8.0
 simplejson==3.18.1
 six==1.16.0
 sqlparse==0.5.0
