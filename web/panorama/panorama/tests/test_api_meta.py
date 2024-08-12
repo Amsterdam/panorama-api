@@ -1,9 +1,4 @@
-# Python
-from unittest.mock import Mock, MagicMock
-
-# Packages
-from django.http import HttpResponse
-from corsheaders.middleware import CorsMiddleware
+from rest_framework.test import APIClient
 
 # Project
 from .test_api_base import PanoramaApiTest
@@ -21,18 +16,11 @@ class ApiMetasTest(PanoramaApiTest):
         """
         Cross Origin Requests should be allowed.
         """
-        request = Mock(
-            path="https://api.data.amsterdam.nl/panorama/panoramas/?lat=52.3779561&lon=4.8970701"
+        response = APIClient().get("https://api.data.amsterdam.nl/panorama/panoramas/?lat=52.3779561&lon=4.8970701",
+            HTTP_REFERER = "https://foo.google.com",
+            HTTP_HOST = "api.data.amsterdam.nl",
+            HTTP_ORIGIN = "https://foo.google.com"
         )
-        request.method = "GET"
-        request.is_secure = lambda: True
-        request.META = {
-            "HTTP_REFERER": "https://foo.google.com",
-            "HTTP_HOST": "api.data.amsterdam.nl",
-            "HTTP_ORIGIN": "https://foo.google.com",
-        }
-        response = CorsMiddleware(get_response=MagicMock()).process_response(
-            request, HttpResponse()
-        )
+
         self.assertTrue("Access-Control-Allow-Origin" in response.headers)
         self.assertEquals("*", response.headers["Access-Control-Allow-Origin"])
