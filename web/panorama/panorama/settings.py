@@ -67,7 +67,7 @@ DATABASE_OPTIONS = {
         "HOST": os.getenv(OVERRIDE_HOST_ENV_VAR),
         "PORT": os.getenv(OVERRIDE_PORT_ENV_VAR, "5432"),
         "OPTIONS": {
-            'sslmode': env('DATABASE_SSLMODE', default='require'),
+            "sslmode": os.getenv("DATABASE_SSLMODE", "require"),
         },
     },
 }
