@@ -4,7 +4,6 @@ from unittest import TestCase
 
 # Packages
 from django.contrib.gis.geos import Point
-from django.utils.timezone import utc as UTC_TZ
 import factory
 import factory.fuzzy
 
@@ -24,7 +23,7 @@ class TestTransformer(TestCase):
             factories.PanoramaFactory.create(
                 pano_id="TMX7315120208-000073_pano_0004_000087",
                 timestamp=factory.fuzzy.FuzzyDateTime(
-                    datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
+                    datetime.datetime(2014, 1, 1, tzinfo=datetime.timezone.utc), force_year=2014
                 ),
                 filename="pano_0004_000087.jpg",
                 path="2016/06/09/TMX7315120208-000073/",
@@ -43,7 +42,7 @@ class TestTransformer(TestCase):
             factories.PanoramaFactory.create(
                 pano_id="TMX7315120208-000067_pano_0011_000463",
                 timestamp=factory.fuzzy.FuzzyDateTime(
-                    datetime.datetime(2014, 1, 1, tzinfo=UTC_TZ), force_year=2014
+                    datetime.datetime(2014, 1, 1, tzinfo=datetime.timezone.utc), force_year=2014
                 ),
                 filename="pano_0011_000463.jpg",
                 path="2016/06/06/TMX7315120208-000067/",

@@ -31,6 +31,10 @@ class OpnameLocatieApiTest(PanoramaApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("pano_id", response.data)
 
+    def test_invalid_srid_returns_400(self):
+        response = self.client.get("/panorama/panoramas/?srid=1234")
+        self.assertEqual(response.status_code, 400)
+
     def test_fieldset_to_spec(self):
         response = self.client.get("/panorama/panoramas/PANO_1_2014/")
         self.assertEqual(response.status_code, 200)

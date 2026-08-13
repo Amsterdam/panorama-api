@@ -35,6 +35,7 @@ SURFACE_TYPE_CHOICES = (
 )
 
 SRID_CHOICES = (("4326", "4326"), ("28992", "28992"))
+SRID_VALUES = {int(srid) for srid, _label in SRID_CHOICES}
 
 
 # https://stackoverflow.com/questions/47094982/django-subquery-and-annotations-with-outerref
@@ -68,9 +69,7 @@ class PanoramaFilter(FilterSet):
     near = filters.CharFilter(method="near_filter", label="Near point")
     radius = filters.NumberFilter(method="radius_filter", label="Radius")
     bbox = filters.CharFilter(method="bbox_filter", label="Bounding box")
-    srid = filters.ChoiceFilter(
-        method="srid_filter", choices=SRID_CHOICES, label="Projection (SRID)"
-    )
+    srid = filters.CharFilter(method="srid_filter", label="Projection (SRID)")
 
     newest_in_range = filters.BooleanFilter(
         method="newest_in_range_filter", label="Only return newest in range"
@@ -155,7 +154,12 @@ class PanoramaFilter(FilterSet):
             try:
                 srid = int(self._get_filter_string("srid"))
             except ValueError:
-                raise ValueError("srid must be a number")
+                raise rest_serializers.ValidationError("srid must be a number")
+            if srid not in SRID_VALUES:
+                raise rest_serializers.ValidationError(
+                    "srid must be one of %s"
+                    % ", ".join(str(value) for value in sorted(SRID_VALUES))
+                )
             return srid
         else:
             return self.DEFAULT_SRID
@@ -303,8 +307,7 @@ class PanoramaFilter(FilterSet):
         return queryset.filter(tags__contains=value.split(","))
 
     def srid_filter(self, queryset, name, value):
-        # Don't do anything, SRID parameter is used
-        # in bbox and radius filters
+        self._get_srid_parameter()
         return queryset
 
     def limit_results_filter(self, queryset, name, value):
