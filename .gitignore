@@ -14,3 +14,5 @@ test_output
 .project
 .pydevproject
 web/panorama/google-application-credentials.json
+
+.python-version

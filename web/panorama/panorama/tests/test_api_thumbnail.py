@@ -3,7 +3,6 @@ import datetime
 
 # Packages
 from django.contrib.gis.geos import Point
-from django.utils.timezone import utc as UTC_TZ
 import factory
 import factory.fuzzy
 
