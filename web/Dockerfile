@@ -15,7 +15,7 @@ FROM python:3.11-slim-bookworm
 RUN useradd -U -r panorama
 RUN apt update && apt install --no-install-recommends -y \
     curl \
-    libgdal28 \
+    libgdal32 \
     libgeos-c1v5 \
     libpq5 \
     media-types \
