@@ -13,10 +13,18 @@ on:
     - master
 
 jobs:
-  docker:
+  tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-
+    # Run tests for different PostGIS versions, while we migrate the db.
+    strategy:
+      fail-fast: false
+      matrix:
+        postgis-version:
+          - 14-3.2
+          - 17-3.5
+    env:
+      POSTGIS_VERSION: ${{ matrix.postgis-version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v1

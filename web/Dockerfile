@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye AS builder
+FROM python:3.11-slim-bookworm AS builder
 MAINTAINER datapunt@amsterdam.nl
 
 RUN apt update && apt install --no-install-recommends -y \
@@ -11,11 +11,11 @@ RUN python -m pip install uwsgi
 RUN python -m pip install --no-cache-dir -r $PIP_REQUIREMENTS
 
 # Start runtime image,
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bookworm
 RUN useradd -U -r panorama
 RUN apt update && apt install --no-install-recommends -y \
     curl \
-    libgdal28 \
+    libgdal32 \
     libgeos-c1v5 \
     libpq5 \
     media-types \
