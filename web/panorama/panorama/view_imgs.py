@@ -92,6 +92,8 @@ class ThumbnailViewSet(PanoramaViewSet):
 
         request._request.META = request._request.META.copy()
         request._request.META["HTTP_ACCEPT"] = "text/html"
+        # Clear the cached headers to allow the new HTTP_ACCEPT to be used in the PanoramaViewSet
+        request._request.__dict__.pop("headers", None)
 
         if "radius" not in request._request.GET:
             request._request.GET["radius"] = "20"
